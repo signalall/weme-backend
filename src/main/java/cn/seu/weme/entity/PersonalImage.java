@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 @Entity
 public class PersonalImage extends BaseImage {
 
-
     @ManyToOne(targetEntity = User.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_id")
     private User user;

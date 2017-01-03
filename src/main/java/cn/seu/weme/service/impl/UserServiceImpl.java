@@ -593,7 +593,7 @@ public class UserServiceImpl implements UserService {
         Long userId = user.getId();
         List<PersonalImage> personalImages = new ArrayList<>();
         if (imageId == 0L) {
-            personalImages = personImageDao.getPersonalImages(userId);
+//            personalImages = personImageDao.getPersonalImages(userId);
         } else {
             personalImages = personImageDao.getPersonalImages2(userId, imageId);
         }
