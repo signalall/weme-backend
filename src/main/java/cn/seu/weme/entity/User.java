@@ -44,6 +44,18 @@ public class User {
     private Date timestamp;
     private String tags;
 
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = AvatarVoice.class, cascade = CascadeType.ALL)
+    private AvatarVoice avatarVoice;
+
+
+    public AvatarVoice getAvatarVoice() {
+        return avatarVoice;
+    }
+
+    public void setAvatarVoice(AvatarVoice avatarVoice) {
+        this.avatarVoice = avatarVoice;
+    }
+
     @Basic(fetch = FetchType.LAZY)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "attendUsers")
     @Fetch(FetchMode.SELECT)

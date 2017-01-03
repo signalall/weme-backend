@@ -50,7 +50,7 @@ public class UserControllerV2 {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResultInfo putUser(@PathVariable Long id, @RequestBody UserVo userVo) {
         userVo.setId(id);
-        return userService.updateUser(userVo);
+        return userService.updateUserV2(userVo);
     }
 
 

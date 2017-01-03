@@ -1,6 +1,5 @@
 package cn.seu.weme.service.impl;
 
-import antlr.MismatchedCharException;
 import cn.seu.weme.common.result.ResponseInfo;
 import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.common.result.ResultUtil;
@@ -9,12 +8,8 @@ import cn.seu.weme.dao.ActivityDao;
 import cn.seu.weme.dao.CheckMsgDao;
 import cn.seu.weme.dao.PersonImageDao;
 import cn.seu.weme.dao.UserDao;
-import cn.seu.weme.dto.PersonImageVo;
-import cn.seu.weme.dto.UserVo;
-import cn.seu.weme.entity.Activity;
-import cn.seu.weme.entity.CheckMsg;
-import cn.seu.weme.entity.PersonalImage;
-import cn.seu.weme.entity.User;
+import cn.seu.weme.dto.*;
+import cn.seu.weme.entity.*;
 import cn.seu.weme.service.UserService;
 import com.google.common.base.Strings;
 import org.joda.time.DateTime;
@@ -48,6 +43,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private CheckMsgDao checkMsgDao;
+
+    @Autowired
+    private AvatarVoiceDao avatarVoiceDao;
 
     @Autowired
     private ModelMapper mapper;
@@ -169,7 +167,7 @@ public class UserServiceImpl implements UserService {
             return responseInfo;
         }
 
-        if (!checkMsgCode(phone,code)) {
+        if (!checkMsgCode(phone, code)) {
             responseInfo.setStatus("fail");
             responseInfo.setReason("验证码无效");
             return responseInfo;
@@ -329,7 +327,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultInfo updateUser(UserVo userVo) {
+    public ResultInfo updateUserV2(UserVo userVo) {
         User user = userDao.findOne(userVo.getId());
         if (user == null) {
             return ResultUtil.createFail("没有此用户");
@@ -337,6 +335,102 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userVo, user);
         userDao.save(user);
         return ResultUtil.createSuccess("更新用户成功");
+    }
+
+
+    @Override
+    public ResponseInfo updateUser(UserVo userVo) {
+        ResponseInfo responseInfo = new ResponseInfo();
+        User user = userDao.findByToken(userVo.getToken());
+        if (user == null) {
+            responseInfo.setStatus("fail");
+            responseInfo.setReason("invalid access");
+            return responseInfo;
+        }
+
+        if (user.getCertification()) {
+            if (user.getSchool() != userVo.getSchool() ||
+                    user.getDepartment() != userVo.getDepartment() ||
+                    user.getDegree() != userVo.getDegree()) {
+                responseInfo.setStatus("fail");
+                responseInfo.setReason("已认证用户不能修改学校信息");
+                return responseInfo;
+            }
+        }
+        BeanUtils.copyProperties(userVo, user);
+        userDao.save(user);
+        responseInfo.setStatus("successful");
+        responseInfo.setReason("");
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo editSchoolInfo(SchoolInfoVo schoolInfoVo) {
+        User user = userDao.findByToken(schoolInfoVo.getToken());
+        BeanUtils.copyProperties(schoolInfoVo, user);
+        userDao.save(user);
+
+        ResponseInfo responseInfo = new ResponseInfo();
+        responseInfo.setStatus("successful");
+        responseInfo.setReason("");
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo editPersonInfo(UserInfoVo userInfoVo) {
+        User user = userDao.findByToken(userInfoVo.getToken());
+        BeanUtils.copyProperties(userInfoVo, user);
+        userDao.save(user);
+
+        ResponseInfo responseInfo = new ResponseInfo();
+        responseInfo.setStatus("successful");
+        responseInfo.setReason("");
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo editPreferenceInfo(String token, String hobby, String preference) {
+        User user = userDao.findByToken(token);
+        user.setHobby(hobby);
+        user.setPreference(preference);
+        userDao.save(user);
+
+        ResponseInfo responseInfo = new ResponseInfo();
+        responseInfo.setStatus("successful");
+        responseInfo.setReason("");
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo editCardSetting(String token, String cardflag) {
+        ResponseInfo responseInfo = new ResponseInfo();
+        User user = userDao.findByToken(token);
+        AvatarVoice avatarVoice = user.getAvatarVoice();
+
+        if (avatarVoice == null) {
+            responseInfo.setStatus("fail");
+            responseInfo.setReason("error");
+            return responseInfo;
+        }
+
+        switch (cardflag) {
+            case "0":
+                avatarVoice.setCardFlag(false);
+                avatarVoiceDao.save(avatarVoice);
+                break;
+            case "1":
+                avatarVoice.setCardFlag(true);
+                avatarVoiceDao.save(avatarVoice);
+                break;
+            default:
+                responseInfo.setStatus("fail");
+                responseInfo.setReason("wrong cardflag");
+                return responseInfo;
+        }
+
+        responseInfo.setStatus("successful");
+        responseInfo.setReason("");
+        return responseInfo;
     }
 
     @Override

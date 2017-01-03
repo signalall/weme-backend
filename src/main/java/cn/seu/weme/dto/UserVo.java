@@ -20,6 +20,7 @@ public class UserVo {
     private String hometown;
     private String hobby;
     private String preference;
+    private String token;
 
 
     public Long getId() {
@@ -148,5 +149,13 @@ public class UserVo {
 
     public void setPreference(String preference) {
         this.preference = preference;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

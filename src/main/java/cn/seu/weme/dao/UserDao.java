@@ -18,6 +18,7 @@ public interface UserDao extends CrudRepository<User, Long> {
 
     public User findByUsername(String username);
 
+    public User findByToken(String token);
 
 //    @Query(value = "insert into t_follower_followed(follower_id,followed_id) VALUES(?1,?2)",nativeQuery = true)
 //    public void followUser(Long followerId, Long followedId);

@@ -3,7 +3,10 @@ package cn.seu.weme.service;
 import cn.seu.weme.common.result.ResponseInfo;
 import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.dto.PersonImageVo;
+import cn.seu.weme.dto.SchoolInfoVo;
+import cn.seu.weme.dto.UserInfoVo;
 import cn.seu.weme.dto.UserVo;
+import org.apache.catalina.connector.Response;
 
 /**
  * Created by LCN on 2016-12-17.
@@ -14,7 +17,7 @@ public interface UserService {
 
     public ResultInfo getUserById(Long id);
 
-    public ResultInfo updateUser(UserVo userVo);
+    public ResultInfo updateUserV2(UserVo userVo);
 
     public ResultInfo deletUserById(Long id);
 
@@ -49,5 +52,13 @@ public interface UserService {
 
     public ResponseInfo sendSmsCode(String phone, int type);
 
+    public ResponseInfo updateUser(UserVo userVo);
 
+    public ResponseInfo editSchoolInfo(SchoolInfoVo schoolInfoVo);
+
+    public ResponseInfo editPersonInfo(UserInfoVo userInfoVo);
+
+    public ResponseInfo editPreferenceInfo(String token, String hobby, String preference);
+
+    public ResponseInfo editCardSetting(String token,String cardflag);
 }
