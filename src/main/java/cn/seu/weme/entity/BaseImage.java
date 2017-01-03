@@ -4,6 +4,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import java.util.Date;
 
 /**
  * Created by LCN on 2016-12-21.
@@ -19,6 +20,16 @@ public abstract class BaseImage {
     private String thumbnailUrl;
 
     private Boolean disable;
+
+    private Date timestamp;
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public Long getId() {
         return id;

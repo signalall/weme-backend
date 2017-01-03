@@ -14,7 +14,7 @@ import java.util.*;
 @Entity
 public class Activity {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String top;
     private String title;
@@ -22,7 +22,7 @@ public class Activity {
     private String location;
     private String number; //8~10
     private Integer signnumber;
-    private String state;
+    private boolean state;
     private String sponser;
     private Boolean disable;
     private String remark;
@@ -56,14 +56,14 @@ public class Activity {
     private Set<User> attendUsers = new HashSet<>();
 
 
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "t_like_user_activity",
             joinColumns = @JoinColumn(name = "activity_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> likeUsers = new HashSet<>();
 
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "activity",targetEntity = ActivityImage.class)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity", targetEntity = ActivityImage.class)
     private Set<ActivityImage> avtivityImages = new HashSet<>();
 
 
@@ -131,11 +131,11 @@ public class Activity {
         this.signnumber = signnumber;
     }
 
-    public String getState() {
+    public boolean getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(boolean state) {
         this.state = state;
     }
 

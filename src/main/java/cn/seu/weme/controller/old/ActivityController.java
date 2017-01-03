@@ -88,4 +88,49 @@ public class ActivityController {
         return userService.unLikeActivity(token, activityId);
     }
 
+
+    @RequestMapping(value = "/searchactivity", method = {RequestMethod.POST, RequestMethod.GET})
+    public Map searchActivity(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        String text = jsonObject.getString("text");
+        return activityService.searchactivity(token, text);
+    }
+
+
+    @RequestMapping(value = "/getlikeactivity", method = RequestMethod.POST)
+    public Map getLikeActivity(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        int page = jsonObject.getInt("page");
+        return activityService.getLikeActivities(token, page);
+    }
+
+    @RequestMapping(value = "/getattentactivity", method = RequestMethod.POST)
+    public Map getAttendActivities(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        int page = jsonObject.getInt("page");
+        return activityService.getAttendActivities(token, page);
+    }
+
+    @RequestMapping(value = "/getpublishactivity", method = RequestMethod.POST)
+    public Map getPublishActivity(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        int page = jsonObject.getInt("page");
+        return activityService.getPublishActivities(token, page);
+    }
+
+    @RequestMapping(value = "/getpublishactivitydetail", method = RequestMethod.POST)
+    public Map getPublishActivityDetail(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long activityId = jsonObject.getLong("activityid");
+        return activityService.getPublishActivityDetail(token, activityId);
+    }
+
+
+    @RequestMapping(value = "/getactivitystatistic", method = RequestMethod.POST)
+    public Map getActivityStatistic(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long activityId = jsonObject.getLong("activityid");
+        return null;
+    }
+
 }

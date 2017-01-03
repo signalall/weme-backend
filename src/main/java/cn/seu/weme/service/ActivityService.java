@@ -26,4 +26,17 @@ public interface ActivityService {
     public Map getActivitiesInfo(String token, int page);
 
     public Map getActivityDetail(String token, Long activityId);
+
+    public Map searchactivity(String token, String text);
+
+
+    public Map getLikeActivities(String token, int page);
+
+    public Map getAttendActivities(String token, int page);
+
+    public Map getPublishActivities(String token, int page);
+
+    public Map getPublishActivityDetail(String token, Long activityId);
+
+    public Map getActivityStatistic(String token, Long activityId);
 }

@@ -5,8 +5,10 @@ import cn.seu.weme.common.result.ResultUtil;
 import cn.seu.weme.dao.ActivityDao;
 import cn.seu.weme.dao.UserDao;
 import cn.seu.weme.entity.Activity;
+import cn.seu.weme.entity.User;
 import cn.seu.weme.service.ActivityService;
 import cn.seu.weme.dto.old.ActivityVo;
+import com.sun.corba.se.spi.ior.ObjectKey;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LCN on 2016-12-18.
@@ -101,19 +100,7 @@ public class ActivityServiceImpl implements ActivityService {
         List<ActivityVo> activityVos = new ArrayList<>();
 
         for (Activity activity : activities) {
-            ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
-            if (activity.getAuthorUser() != null) {
-                activityVo.setSchool(activity.getAuthorUser().getSchool());
-                activityVo.setGender(activity.getAuthorUser().getGender());
-            }
-            activityVo.setSignnumber(activity.getAttendUsers().size() + "");
-
-            if (userDao.isAttendActivity(userId, activity.getId()) == 0) {
-                activityVo.setSignstate("no");
-            } else {
-                activityVo.setSignstate("yes");
-            }
-            activityVos.add(activityVo);
+            activityVos.add(activityToVo(activity, userId));
         }
         entityManager.clear();
 
@@ -150,11 +137,190 @@ public class ActivityServiceImpl implements ActivityService {
         }
 
         Map<String, Object> result = new HashMap<>();
-        result.put("result",activityVo);
-        result.put("state","successful");
-        result.put("reason","");
+        result.put("result", activityVo);
+        result.put("state", "successful");
+        result.put("reason", "");
 
 
         return result;
+    }
+
+    @Override
+    public Map searchactivity(String token, String text) {
+        Long userId = userDao.findByToken(token).getId();
+
+        List<Activity> activities = activityDao.findActivitiesByTitle("%" + text + "%");
+        List<ActivityVo> activityVos = new ArrayList<>();
+
+        for (Activity activity : activities) {
+            activityVos.add(activityToVo(activity, userId));
+        }
+
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("state", "successful");
+        result.put("result", activityVos);
+        result.put("reason", "");
+
+
+        return result;
+    }
+
+    @Override
+    public Map getLikeActivities(String token, int page) {
+        Long userId = userDao.findByToken(token).getId();
+        int pageSize = 10;
+        int index = (page - 1) * 10;
+        Query query = entityManager.createQuery("select a from Activity as a join a.likeUsers as u where u.id = ?1");
+        query.setParameter(1, userId);
+
+        List<Activity> activities = query.setMaxResults(pageSize).setFirstResult(index).getResultList();
+        List<ActivityVo> activityVos = new ArrayList<>();
+
+        for (Activity activity : activities) {
+            activityVos.add(activityToVo(activity, userId));
+        }
+        entityManager.clear();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", activityVos);
+        result.put("state", "successful");
+        result.put("pages", 0);
+        result.put("reason", "");
+        return result;
+    }
+
+    @Override
+    public Map getAttendActivities(String token, int page) {
+        Long userId = userDao.findByToken(token).getId();
+        int pageSize = 10;
+        int index = (page - 1) * 10;
+        Query query = entityManager.createQuery("select a from Activity as a join a.attendUsers as u where u.id = ?1");
+        List<Activity> activities = query.setMaxResults(pageSize).setFirstResult(index).getResultList();
+        List<ActivityVo> activityVos = new ArrayList<>();
+
+        for (Activity activity : activities) {
+            activityVos.add(activityToVo2(activity, userId));
+        }
+        entityManager.clear();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", activityVos);
+        result.put("state", "successful");
+        result.put("pages", 0);
+        result.put("reason", "");
+        return result;
+    }
+
+    @Override
+    public Map getPublishActivities(String token, int page) {
+        Long userId = userDao.findByToken(token).getId();
+        int pageSize = 10;
+        int index = (page - 1) * 10;
+        Query query = entityManager.createQuery("select a from Activity as a join a.authorUser as u where u.id = ?1");
+        List<Activity> activities = query.setMaxResults(pageSize).setFirstResult(index).getResultList();
+        List<ActivityVo> activityVos = new ArrayList<>();
+
+        for (Activity activity : activities) {
+            activityVos.add(activityToVo2(activity, userId));
+        }
+        entityManager.clear();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", activityVos);
+        result.put("state", "successful");
+        result.put("pages", 0);
+        result.put("reason", "");
+        return result;
+    }
+
+    @Override
+    public Map getPublishActivityDetail(String token, Long activityId) {
+        Long userId = userDao.findByToken(token).getId();
+        Activity activity = activityDao.findOne(activityId);
+        ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
+        if (activity.getAuthorUser() != null) {
+            activityVo.setSchool(activity.getAuthorUser().getSchool());
+            activityVo.setGender(activity.getAuthorUser().getGender());
+        }
+        if (activity.getPassflag().equals(1)) {
+            activityVo.setPassState("已通过");
+        } else if (activity.getPassflag().equals(2)) {
+            activityVo.setPassState("未通过");
+        } else {
+            activityVo.setPassState("审核中");
+        }
+        //todo poster 图片
+
+        activityVo.setSignnumber(activity.getAttendUsers().size() + "");
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", activityVo);
+        result.put("state", "successful");
+        result.put("pages", 0);
+        result.put("reason", "");
+
+        return result;
+    }
+
+    @Override
+    public Map getActivityStatistic(String token, Long activityId) {
+        Activity activity = activityDao.findOne(activityId);
+
+        Query query = entityManager.createNativeQuery("select count(a) from Activity as a WHERE a.id = ?1 WHERE TIMESTAMP BETWEEN ?2 AND ?3");
+        query.setParameter(1, activityId);
+
+
+        int registeredTotal = query.executeUpdate();
+        int likedTotal = activityDao.findOne(activityId).getLikeUsers().size();
+
+
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("registeredTotal", registeredTotal);
+        data.put("likedTotal", likedTotal);
+        data.put("activity", activity.getTitle());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", data);
+        result.put("state", "successful");
+        result.put("reason", "");
+        return result;
+    }
+
+    private ActivityVo activityToVo(Activity activity, Long userId) {
+        ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
+        if (activity.getAuthorUser() != null) {
+            activityVo.setSchool(activity.getAuthorUser().getSchool());
+            activityVo.setGender(activity.getAuthorUser().getGender());
+        }
+        activityVo.setSignnumber(activity.getAttendUsers().size() + "");
+
+        if (userDao.isAttendActivity(userId, activity.getId()) == 0) {
+            activityVo.setSignstate("no");
+        } else {
+            activityVo.setSignstate("yes");
+        }
+        return activityVo;
+    }
+
+
+    private ActivityVo activityToVo2(Activity activity, Long userId) {
+        ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
+        if (activity.getAuthorUser() != null) {
+            activityVo.setSchool(activity.getAuthorUser().getSchool());
+            activityVo.setGender(activity.getAuthorUser().getGender());
+        }
+        activityVo.setSignnumber(activity.getAttendUsers().size() + "");
+
+        if (activity.getPassflag().equals(1)) {
+            activityVo.setPassState("已通过");
+        } else if (activity.getPassflag().equals(2)) {
+            activityVo.setPassState("未通过");
+        } else {
+            activityVo.setPassState("审核中");
+        }
+
+        return activityVo;
     }
 }

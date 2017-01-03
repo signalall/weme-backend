@@ -28,6 +28,16 @@ public class ActivityVo {
 
     private String imageurl;
     private String likeflag;
+    private String passState;
+
+
+    public String getPassState() {
+        return passState;
+    }
+
+    public void setPassState(String passState) {
+        this.passState = passState;
+    }
 
     public String getLikeflag() {
         return likeflag;

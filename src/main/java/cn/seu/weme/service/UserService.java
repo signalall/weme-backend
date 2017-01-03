@@ -76,4 +76,16 @@ public interface UserService {
     public Map likeActivity(String token, Long activityId);
 
     public Map unLikeActivity(String token, Long activityId);
+
+    public Map getTag(Long userId);
+
+    public Map setTag(String token, String tag);
+
+    public Map getPersonImages(String token, Long imageId);
+
+    public UserVo getProfile(String token);
+
+    public UserVo getProfileById(String token, Long userId);
+
+    public UserVo getProfileByIdPhone(String token, Long userId);
 }

@@ -56,6 +56,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private MessageSourceHelper messageSourceHelper;
 
+
     @Override
     public ResultInfo attendActityV2(Long userId, Long activityId) {
         User user = userDao.findOne(userId);
@@ -520,6 +521,7 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+
     @Override
     public ResultInfo deletUserById(Long id) {
         User user = userDao.findOne(id);
@@ -552,4 +554,86 @@ public class UserServiceImpl implements UserService {
         }
         return true;
     }
+
+
+    @Override
+    public Map getTag(Long userId) {
+        User user = userDao.findOne(userId);
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
+
+        if (user.getTags() == null) {
+            result.put("result", "");
+        } else {
+            data.put("tags", user.getTags());
+            result.put("result", data);
+        }
+
+        result.put("state", "successful");
+        result.put("reason", "");
+        return result;
+    }
+
+    @Override
+    public Map setTag(String token, String tag) {
+        User user = userDao.findByToken(token);
+        user.setTags(tag);
+        userDao.save(user);
+
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("state", "successful");
+        result.put("reason", "");
+        return result;
+    }
+
+    @Override
+    public Map getPersonImages(String token, Long imageId) {
+        User user = userDao.findByToken(token);
+        Long userId = user.getId();
+        List<PersonalImage> personalImages = new ArrayList<>();
+        if (imageId == 0L) {
+            personalImages = personImageDao.getPersonalImages(userId);
+        } else {
+            personalImages = personImageDao.getPersonalImages2(userId, imageId);
+        }
+
+        List<Map> result = new ArrayList<>();
+        for (PersonalImage personalImage : personalImages) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("userid", userId);
+            data.put("id", personalImage.getId());
+            data.put("timestamp", personalImage.getTimestamp());
+            data.put("username", user.getName());
+            data.put("thumbnail", personalImage.getThumbnailUrl());
+            data.put("image", personalImage.getUrl());
+            result.add(data);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("state", "successful");
+        response.put("reason", "");
+        response.put("result", result);
+        return response;
+    }
+
+    @Override
+    public UserVo getProfile(String token) {
+        User user = userDao.findByToken(token);
+        UserVo userVo = mapper.map(user, UserVo.class);
+        return userVo;
+    }
+
+    @Override
+    public UserVo getProfileById(String token, Long userId) {
+        //todo 用户之间关系
+        return null;
+    }
+
+    @Override
+    public UserVo getProfileByIdPhone(String token, Long userId) {
+        // TODO: 2017-1-3
+        return null;
+    }
+
 }

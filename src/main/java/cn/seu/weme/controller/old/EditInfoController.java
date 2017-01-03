@@ -54,8 +54,6 @@ public class EditInfoController {
     public ResponseInfo editCardSetting(@RequestBody JSONObject jsonObject) {
         String token = jsonObject.getString("token");
         String cardflag = jsonObject.getString("cardflag");
-
         return userService.editCardSetting(token, cardflag);
-
     }
 }

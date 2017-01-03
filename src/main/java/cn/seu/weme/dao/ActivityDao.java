@@ -12,4 +12,7 @@ import java.util.List;
  * Created by LCN on 2016-12-17.
  */
 public interface ActivityDao extends CrudRepository<Activity, Long> {
+
+    @Query("from Activity a where a.title like :title")
+    List<Activity> findActivitiesByTitle(@Param("title") String title);
 }
