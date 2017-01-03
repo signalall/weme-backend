@@ -28,8 +28,8 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         //校验用户访问是否是公开资源 地址
         List<String> open_urls = new ArrayList<String>();
-        open_urls.add("login");
-        open_urls.add("register");
+        open_urls.add("loginV2");
+        open_urls.add("registerV2");
         open_urls.add("logout");
         open_urls.add("submitEmailInfo");
         open_urls.add("checkVerificationCode");

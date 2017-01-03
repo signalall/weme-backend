@@ -11,7 +11,12 @@ import org.springframework.data.repository.CrudRepository;
 public interface UserDao extends CrudRepository<User, Long> {
 
     @Query(value = "update t_attend_user_activity set activity_id = ?1 and user_id = ?2", nativeQuery = true)
-    public void attenActivity(Long userId, Long activityId);
+    public void attendActivity(Long userId, Long activityId);
+
+
+    public User findByPhone(String phone);
+
+    public User findByUsername(String username);
 
 
 //    @Query(value = "insert into t_follower_followed(follower_id,followed_id) VALUES(?1,?2)",nativeQuery = true)

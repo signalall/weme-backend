@@ -24,6 +24,7 @@ public class User {
     @Column(length = 30, nullable = true)
     private String username;
     private String password;
+    private String salt;
     private String token;
     private String school;
     private String degree;
@@ -63,7 +64,6 @@ public class User {
     private Set<Activity> sponsorActivities = new HashSet<>();
 
 
-
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "followeds")
     private Set<User> followers = new HashSet<>();//自己关注的人
 
@@ -81,7 +81,7 @@ public class User {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "likeusers")
     private Set<Post> posts = new HashSet<>();
 
-    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "user",targetEntity = PersonalImage.class)
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "user", targetEntity = PersonalImage.class)
     private Set<PersonalImage> personalImages = new HashSet<>();
 
 
@@ -102,6 +102,14 @@ public class User {
     }
 
     public User() {
+    }
+
+
+    public User(String phone, String password, String salt, String token) {
+        this.phone = phone;
+        this.password = password;
+        this.salt = salt;
+        this.token = token;
     }
 
     public User(Integer age, String username) {
@@ -328,4 +336,11 @@ public class User {
     }
 
 
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
 }

@@ -10,13 +10,9 @@ public class ResultUtil {
         return new ResultInfo(ResultInfo.TYPE_RESULT_FAIL, message);
     }
 
-
-
-
     public static ResultInfo createPermissionError(String message) {
         return new ResultInfo(ResultInfo.TYPE_LOGIN_ERROR, message);
     }
-
 
     /**
      * 创建成功提示结果
@@ -24,7 +20,6 @@ public class ResultUtil {
     public static ResultInfo createSuccess(String message) {
         return new ResultInfo(ResultInfo.TYPE_RESULT_SUCCESS, message);
     }
-
 
     /**
      * 创建成功提示结果

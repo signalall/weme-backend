@@ -16,7 +16,6 @@ public class ActivityController {
     @Autowired
     private ActivityService activityService;
 
-
     @RequestMapping(value="/", method= RequestMethod.GET)
     public ResultInfo getActivitiesList() {
         return activityService.getAllActities();

@@ -1,17 +1,26 @@
 package cn.seu.weme.service.impl;
 
+import antlr.MismatchedCharException;
+import cn.seu.weme.common.result.ResponseInfo;
 import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.common.result.ResultUtil;
+import cn.seu.weme.common.utils.*;
 import cn.seu.weme.dao.ActivityDao;
+import cn.seu.weme.dao.CheckMsgDao;
 import cn.seu.weme.dao.PersonImageDao;
 import cn.seu.weme.dao.UserDao;
 import cn.seu.weme.dto.PersonImageVo;
 import cn.seu.weme.dto.UserVo;
 import cn.seu.weme.entity.Activity;
+import cn.seu.weme.entity.CheckMsg;
 import cn.seu.weme.entity.PersonalImage;
 import cn.seu.weme.entity.User;
 import cn.seu.weme.service.UserService;
+import com.google.common.base.Strings;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import org.modelmapper.ModelMapper;
+import org.omg.PortableInterceptor.USER_EXCEPTION;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by LCN on 2016-12-17.
@@ -40,14 +46,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PersonImageDao personImageDao;
 
-
+    @Autowired
+    private CheckMsgDao checkMsgDao;
 
     @Autowired
     private ModelMapper mapper;
 
-
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private MessageSourceHelper messageSourceHelper;
 
     @Override
     public ResultInfo attendActity(Long userId, Long activityId) {
@@ -62,7 +71,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultInfo attendActivity2(Long userId, Long activityId) {
 
-        userDao.attenActivity(userId, activityId);
+        userDao.attendActivity(userId, activityId);
         return ResultUtil.createSuccess("参加活动成功");
     }
 
@@ -103,28 +112,204 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultInfo uploadImage(Long userId, PersonImageVo personImageVo) {
         User user = userDao.findOne(userId);
-        PersonalImage personalImage = mapper.map(personImageVo,PersonalImage.class);
+        PersonalImage personalImage = mapper.map(personImageVo, PersonalImage.class);
         personalImage.setUser(user);
 
         personImageDao.save(personalImage);
         return ResultUtil.createSuccess("保存图片成功");
     }
 
+
     @Override
-    public void testFollowers() {
-        User user = userDao.findOne(3L);
-        User user1 = userDao.findOne(4L);
-        User user2 = userDao.findOne(5L);
+    public ResultInfo registerV2(String phone, String code, String password) {
+
+        if (Strings.isNullOrEmpty(phone) || Strings.isNullOrEmpty(code) || Strings.isNullOrEmpty(password)) {
+            return ResultUtil.createFail(messageSourceHelper.getMessage("100"));
+        }
+
+        User user = userDao.findByPhone(phone);
+        if (user != null) {
+            return ResultUtil.createFail(messageSourceHelper.getMessage("101"));
+        }
+
+        CheckMsg checkMsg = checkMsgDao.findByPhone(phone);
+        if (checkMsg == null || !checkMsg.getCode().equals(code)) {
+            return ResultUtil.createFail(messageSourceHelper.getMessage("102"));
+        }
+
+        if (Minutes.minutesBetween(new DateTime(), new DateTime(checkMsg.getTimeStamp())).getMinutes() > 5) {
+            return ResultUtil.createFail("验证码超时!");
+        }
 
 
-        List<User> users = new ArrayList<>();
-        users.add(user1);
-        users.add(user2);
+        String token = TokenProcessor.generateToken(phone + code + password);
+        String salt = CryptoUtils.getSalt();
+        String hashedPassword = CryptoUtils.getHash(password, salt);
+        User newUser = new User(phone, hashedPassword, salt, token);
+        userDao.save(newUser);
 
+        Map data = new HashMap<>();
+        data.put("token", token);
 
-        user.getFolloweds().addAll(users);
-        userDao.save(user);
+        return ResultUtil.createSuccess(messageSourceHelper.getMessage("103"), data);
     }
+
+    @Override
+    public ResponseInfo register(String phone, String code, String password) {
+        ResponseInfo responseInfo = new ResponseInfo();
+        if (Strings.isNullOrEmpty(phone) || Strings.isNullOrEmpty(code) || Strings.isNullOrEmpty(password)) {
+            responseInfo.setStatus("fail");
+            responseInfo.setReason("参数错误");
+            return responseInfo;
+        }
+
+        if (userDao.findByPhone(phone) != null) {
+            responseInfo.setReason("该手机号已经注册");
+            responseInfo.setStatus("fail");
+            return responseInfo;
+        }
+
+        if (!checkMsgCode(phone,code)) {
+            responseInfo.setStatus("fail");
+            responseInfo.setReason("验证码无效");
+            return responseInfo;
+        }
+
+        String token = TokenProcessor.generateToken(phone + code + password);
+        String salt = CryptoUtils.getSalt();
+        String hashedPassword = CryptoUtils.getHash(password, salt);
+        User user = new User(phone, hashedPassword, salt, token);
+        user.setUsername(phone);
+        userDao.save(user);
+        responseInfo.setStatus("successful");
+        responseInfo.setReason("");
+        responseInfo.setToken(user.getToken());
+        responseInfo.setId(user.getId());
+        return responseInfo;
+    }
+
+    @Override
+    public ResultInfo resetPasswordV2(String newPassword, String phone, String code) {
+        User user = userDao.findByPhone(phone);
+        if (user == null) {
+            return ResultUtil.createFail("该用户还未注册!");
+        }
+        CheckMsg checkMsg = checkMsgDao.findByPhone(phone);
+        if (checkMsg == null || !checkMsg.getCode().equals(code)) {
+            return ResultUtil.createFail("验证码错误!");
+        }
+
+        if (Minutes.minutesBetween(new DateTime(), new DateTime(checkMsg.getTimeStamp())).getMinutes() > 5) {
+            return ResultUtil.createFail("验证码超时!");
+        }
+
+        String token = TokenProcessor.generateToken(phone + code + newPassword);
+
+        String salt = CryptoUtils.getSalt();
+        String hashedPassword = CryptoUtils.getHash(newPassword, salt);
+        user.setToken(token);
+        user.setPassword(hashedPassword);
+        user.setSalt(salt);
+        userDao.save(user);
+        return ResultUtil.createFail("重置密码成功!");
+    }
+
+    @Override
+    public ResponseInfo resetPassword(String newPassword, String phone, String code) {
+        ResponseInfo responseInfo = new ResponseInfo();
+        User user = userDao.findByPhone(phone);
+        if (user == null) {
+            responseInfo.setStatus("fail");
+            responseInfo.setReason("该手机号尚未被注册");
+            return responseInfo;
+        }
+
+        if (!checkMsgCode(phone, code)) {
+            responseInfo.setStatus("fail");
+            responseInfo.setReason("验证码无效");
+            return responseInfo;
+        }
+        responseInfo.setStatus("successful");
+        responseInfo.setReason("");
+        responseInfo.setToken(user.getToken());
+        responseInfo.setId(user.getId());
+        return responseInfo;
+    }
+
+    @Override
+    public ResultInfo loginV2(String username, String password) {
+        //用户名保证唯一
+        User user = userDao.findByUsername(username);
+        if (user == null) {
+            return ResultUtil.createFail("用户名密码错误");
+        }
+
+        if (!CryptoUtils.verify(user.getPassword(), password, user.getSalt())) {
+            return ResultUtil.createFail("用户名密码错误");
+        }
+
+        String token = user.getToken();
+
+        return ResultUtil.createSuccess("用户登录成功!", token);
+    }
+
+    @Override
+    public ResponseInfo login(String username, String password) {
+        ResponseInfo responseInfo = new ResponseInfo();
+        User user = userDao.findByUsername(username);
+        if (user == null) {
+            responseInfo.setStatus("fail");
+            responseInfo.setReason("用户名密码错误");
+            return responseInfo;
+        }
+        if (!CryptoUtils.verify(user.getPassword(), password, user.getSalt())) {
+            responseInfo.setStatus("fail");
+            responseInfo.setReason("用户名密码错误");
+            return responseInfo;
+        }
+
+
+        responseInfo.setStatus("successful");
+        responseInfo.setReason("");
+        responseInfo.setId(user.getId());
+        responseInfo.setToken(user.getToken());
+        responseInfo.setGender(user.getGender());
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo sendSmsCode(String phone, int type) {
+        ResponseInfo responseInfo = new ResponseInfo();
+        boolean success = false;
+
+        if (userDao.findByPhone(phone) == null) {
+            responseInfo.setStatus("fail");
+            responseInfo.setReason("invalid");
+            return responseInfo;
+        }
+
+        String code = RandUtils.getRandomString(6);
+        success = SmsUtils.sendSmsCodeByType(phone, code, type);
+
+        if (!success) {
+            responseInfo.setStatus("fail");
+            responseInfo.setReason("验证码发送失败");
+            return responseInfo;
+        }
+
+        CheckMsg checkMsg = checkMsgDao.findByPhone(phone);
+        if (checkMsg == null) {
+            checkMsg = new CheckMsg(phone, code);
+        } else {
+            checkMsg.setCode(code);
+            checkMsg.setTimeStamp(new Date());
+        }
+        checkMsgDao.save(checkMsg);
+        responseInfo.setStatus("successful");
+        responseInfo.setReason("");
+        return responseInfo;
+    }
+
 
     @Override
     public ResultInfo addUser(UserVo userVo) {
@@ -172,5 +357,18 @@ public class UserServiceImpl implements UserService {
             userVos.add(mapper.map(user, UserVo.class));
         }
         return ResultUtil.createSuccess("所有用户", userVos);
+    }
+
+
+    private boolean checkMsgCode(String phone, String code) {
+        CheckMsg checkMsg = checkMsgDao.findByPhone(phone);
+        if (checkMsg == null || !checkMsg.getCode().equals(code)) {
+            return false;
+        }
+
+        if (Minutes.minutesBetween(new DateTime(checkMsg.getTimeStamp()), new DateTime()).getMinutes() > 5) {
+            return false;
+        }
+        return true;
     }
 }
