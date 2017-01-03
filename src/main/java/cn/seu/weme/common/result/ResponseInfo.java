@@ -4,7 +4,7 @@ package cn.seu.weme.common.result;
  * Created by LCN on 2017-1-3.
  */
 public class ResponseInfo {
-    private String status;
+    private String state;
     private String reason;
     private Long id;
     private String token;
@@ -21,17 +21,17 @@ public class ResponseInfo {
     public ResponseInfo() {
     }
 
-    public ResponseInfo(String status, String reason) {
-        this.status = status;
+    public ResponseInfo(String state, String reason) {
+        this.state = state;
         this.reason = reason;
     }
 
-    public String getStatus() {
-        return status;
+    public String getState() {
+        return state;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getReason() {

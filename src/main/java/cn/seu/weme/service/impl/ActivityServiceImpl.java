@@ -3,17 +3,23 @@ package cn.seu.weme.service.impl;
 import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.common.result.ResultUtil;
 import cn.seu.weme.dao.ActivityDao;
+import cn.seu.weme.dao.UserDao;
 import cn.seu.weme.entity.Activity;
 import cn.seu.weme.service.ActivityService;
-import cn.seu.weme.dto.ActivityVo;
+import cn.seu.weme.dto.old.ActivityVo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LCN on 2016-12-18.
@@ -27,7 +33,14 @@ public class ActivityServiceImpl implements ActivityService {
     private ActivityDao activityDao;
 
     @Autowired
+    private UserDao userDao;
+
+    @Autowired
     private ModelMapper mapper;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     @Override
     public ResultInfo addActivity(ActivityVo activityVo) {
@@ -59,9 +72,9 @@ public class ActivityServiceImpl implements ActivityService {
         List<Activity> activities = (List<Activity>) activityDao.findAll();
         List<ActivityVo> activityVos = new ArrayList<>();
         for (Activity activity : activities) {
-            activityVos.add(mapper.map(activity,ActivityVo.class));
+            activityVos.add(mapper.map(activity, ActivityVo.class));
         }
-        return ResultUtil.createSuccess("活动信息",activityVos);
+        return ResultUtil.createSuccess("活动信息", activityVos);
     }
 
     @Override
@@ -75,5 +88,73 @@ public class ActivityServiceImpl implements ActivityService {
             Activity activity = new Activity();
             activityDao.save(activity);
         }
+    }
+
+    @Override
+    public Map getActivitiesInfo(String token, int page) {
+        Long userId = userDao.findByToken(token).getId();
+        int pageSize = 10;
+        int index = (page - 1) * 10;
+        Query query = entityManager.createQuery("from Activity activity order by activity.timestamp");
+        List<Activity> activities = query.setMaxResults(pageSize).setFirstResult(index).getResultList();
+
+        List<ActivityVo> activityVos = new ArrayList<>();
+
+        for (Activity activity : activities) {
+            ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
+            if (activity.getAuthorUser() != null) {
+                activityVo.setSchool(activity.getAuthorUser().getSchool());
+                activityVo.setGender(activity.getAuthorUser().getGender());
+            }
+            activityVo.setSignnumber(activity.getAttendUsers().size() + "");
+
+            if (userDao.isAttendActivity(userId, activity.getId()) == 0) {
+                activityVo.setSignstate("no");
+            } else {
+                activityVo.setSignstate("yes");
+            }
+            activityVos.add(activityVo);
+        }
+        entityManager.clear();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", activityVos);
+        result.put("state", "successful");
+        result.put("pages", 0);
+        result.put("reason", "");
+
+        return result;
+    }
+
+    @Override
+    public Map getActivityDetail(String token, Long activityId) {
+        Long userId = userDao.findByToken(token).getId();
+
+        Activity activity = activityDao.findOne(activityId);
+        ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
+        if (activity.getAuthorUser() != null) {
+            activityVo.setSchool(activity.getAuthorUser().getSchool());
+            activityVo.setGender(activity.getAuthorUser().getGender());
+        }
+
+        if (userDao.isAttendActivity(userId, activity.getId()) == 0) {
+            activityVo.setSignstate("no");
+        } else {
+            activityVo.setSignstate("yes");
+        }
+
+        if (userDao.isLikeActivity(userId, activityId) == 0) {
+            activityVo.setLikeflag("0");
+        } else {
+            activityVo.setLikeflag("1");
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("result",activityVo);
+        result.put("state","successful");
+        result.put("reason","");
+
+
+        return result;
     }
 }

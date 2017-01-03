@@ -64,7 +64,7 @@ public class UserControllerV2 {
     public ResultInfo attendActivity(@RequestBody JSONObject jsonObject) {
         Long userId = jsonObject.getLong("userId");
         Long activitiId = jsonObject.getLong("activityId");
-        return userService.attendActity(userId, activitiId);
+        return userService.attendActityV2(userId, activitiId);
     }
 
 

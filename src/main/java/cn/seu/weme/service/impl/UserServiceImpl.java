@@ -9,13 +9,13 @@ import cn.seu.weme.dao.CheckMsgDao;
 import cn.seu.weme.dao.PersonImageDao;
 import cn.seu.weme.dao.UserDao;
 import cn.seu.weme.dto.*;
+import cn.seu.weme.dto.old.ActivityVo;
 import cn.seu.weme.entity.*;
 import cn.seu.weme.service.UserService;
 import com.google.common.base.Strings;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 import org.modelmapper.ModelMapper;
-import org.omg.PortableInterceptor.USER_EXCEPTION;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,12 +57,44 @@ public class UserServiceImpl implements UserService {
     private MessageSourceHelper messageSourceHelper;
 
     @Override
-    public ResultInfo attendActity(Long userId, Long activityId) {
+    public ResultInfo attendActityV2(Long userId, Long activityId) {
         User user = userDao.findOne(userId);
         Activity activity = activityDao.findOne(activityId);
         activity.getAttendUsers().add(user);
         activityDao.save(activity);
         return ResultUtil.createSuccess("参加活动成功");
+    }
+
+    @Override
+    public ResponseInfo attendActivity(String token, Long activityId) {
+        User user = userDao.findByToken(token);
+
+        javax.persistence.Query query = entityManager.createNativeQuery("insert into t_attend_user_activity(user_id,activity_id) VALUES(?1,?2)");
+        query.setParameter(1, user.getId());
+        query.setParameter(2, activityId);
+
+        query.executeUpdate();
+
+        ResponseInfo responseInfo = new ResponseInfo();
+        responseInfo.setState("successful");
+        responseInfo.setReason("");
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo unAttendActivity(String token, Long activityId) {
+        User user = userDao.findByToken(token);
+
+        javax.persistence.Query query = entityManager.createNativeQuery("DELETE FROM t_attend_user_activity WHERE user_id =?1 AND activity_id = ?2");
+        query.setParameter(1, user.getId());
+        query.setParameter(2, activityId);
+
+        query.executeUpdate();
+
+        ResponseInfo responseInfo = new ResponseInfo();
+        responseInfo.setState("successful");
+        responseInfo.setReason("");
+        return responseInfo;
     }
 
 
@@ -156,19 +188,19 @@ public class UserServiceImpl implements UserService {
     public ResponseInfo register(String phone, String code, String password) {
         ResponseInfo responseInfo = new ResponseInfo();
         if (Strings.isNullOrEmpty(phone) || Strings.isNullOrEmpty(code) || Strings.isNullOrEmpty(password)) {
-            responseInfo.setStatus("fail");
+            responseInfo.setState("fail");
             responseInfo.setReason("参数错误");
             return responseInfo;
         }
 
         if (userDao.findByPhone(phone) != null) {
             responseInfo.setReason("该手机号已经注册");
-            responseInfo.setStatus("fail");
+            responseInfo.setState("fail");
             return responseInfo;
         }
 
         if (!checkMsgCode(phone, code)) {
-            responseInfo.setStatus("fail");
+            responseInfo.setState("fail");
             responseInfo.setReason("验证码无效");
             return responseInfo;
         }
@@ -179,7 +211,7 @@ public class UserServiceImpl implements UserService {
         User user = new User(phone, hashedPassword, salt, token);
         user.setUsername(phone);
         userDao.save(user);
-        responseInfo.setStatus("successful");
+        responseInfo.setState("successful");
         responseInfo.setReason("");
         responseInfo.setToken(user.getToken());
         responseInfo.setId(user.getId());
@@ -217,17 +249,17 @@ public class UserServiceImpl implements UserService {
         ResponseInfo responseInfo = new ResponseInfo();
         User user = userDao.findByPhone(phone);
         if (user == null) {
-            responseInfo.setStatus("fail");
+            responseInfo.setState("fail");
             responseInfo.setReason("该手机号尚未被注册");
             return responseInfo;
         }
 
         if (!checkMsgCode(phone, code)) {
-            responseInfo.setStatus("fail");
+            responseInfo.setState("fail");
             responseInfo.setReason("验证码无效");
             return responseInfo;
         }
-        responseInfo.setStatus("successful");
+        responseInfo.setState("successful");
         responseInfo.setReason("");
         responseInfo.setToken(user.getToken());
         responseInfo.setId(user.getId());
@@ -256,18 +288,18 @@ public class UserServiceImpl implements UserService {
         ResponseInfo responseInfo = new ResponseInfo();
         User user = userDao.findByUsername(username);
         if (user == null) {
-            responseInfo.setStatus("fail");
+            responseInfo.setState("fail");
             responseInfo.setReason("用户名密码错误");
             return responseInfo;
         }
         if (!CryptoUtils.verify(user.getPassword(), password, user.getSalt())) {
-            responseInfo.setStatus("fail");
+            responseInfo.setState("fail");
             responseInfo.setReason("用户名密码错误");
             return responseInfo;
         }
 
 
-        responseInfo.setStatus("successful");
+        responseInfo.setState("successful");
         responseInfo.setReason("");
         responseInfo.setId(user.getId());
         responseInfo.setToken(user.getToken());
@@ -281,7 +313,7 @@ public class UserServiceImpl implements UserService {
         boolean success = false;
 
         if (userDao.findByPhone(phone) == null) {
-            responseInfo.setStatus("fail");
+            responseInfo.setState("fail");
             responseInfo.setReason("invalid");
             return responseInfo;
         }
@@ -290,7 +322,7 @@ public class UserServiceImpl implements UserService {
         success = SmsUtils.sendSmsCodeByType(phone, code, type);
 
         if (!success) {
-            responseInfo.setStatus("fail");
+            responseInfo.setState("fail");
             responseInfo.setReason("验证码发送失败");
             return responseInfo;
         }
@@ -303,7 +335,7 @@ public class UserServiceImpl implements UserService {
             checkMsg.setTimeStamp(new Date());
         }
         checkMsgDao.save(checkMsg);
-        responseInfo.setStatus("successful");
+        responseInfo.setState("successful");
         responseInfo.setReason("");
         return responseInfo;
     }
@@ -343,7 +375,7 @@ public class UserServiceImpl implements UserService {
         ResponseInfo responseInfo = new ResponseInfo();
         User user = userDao.findByToken(userVo.getToken());
         if (user == null) {
-            responseInfo.setStatus("fail");
+            responseInfo.setState("fail");
             responseInfo.setReason("invalid access");
             return responseInfo;
         }
@@ -352,14 +384,14 @@ public class UserServiceImpl implements UserService {
             if (user.getSchool() != userVo.getSchool() ||
                     user.getDepartment() != userVo.getDepartment() ||
                     user.getDegree() != userVo.getDegree()) {
-                responseInfo.setStatus("fail");
+                responseInfo.setState("fail");
                 responseInfo.setReason("已认证用户不能修改学校信息");
                 return responseInfo;
             }
         }
         BeanUtils.copyProperties(userVo, user);
         userDao.save(user);
-        responseInfo.setStatus("successful");
+        responseInfo.setState("successful");
         responseInfo.setReason("");
         return responseInfo;
     }
@@ -371,7 +403,7 @@ public class UserServiceImpl implements UserService {
         userDao.save(user);
 
         ResponseInfo responseInfo = new ResponseInfo();
-        responseInfo.setStatus("successful");
+        responseInfo.setState("successful");
         responseInfo.setReason("");
         return responseInfo;
     }
@@ -383,7 +415,7 @@ public class UserServiceImpl implements UserService {
         userDao.save(user);
 
         ResponseInfo responseInfo = new ResponseInfo();
-        responseInfo.setStatus("successful");
+        responseInfo.setState("successful");
         responseInfo.setReason("");
         return responseInfo;
     }
@@ -396,7 +428,7 @@ public class UserServiceImpl implements UserService {
         userDao.save(user);
 
         ResponseInfo responseInfo = new ResponseInfo();
-        responseInfo.setStatus("successful");
+        responseInfo.setState("successful");
         responseInfo.setReason("");
         return responseInfo;
     }
@@ -408,7 +440,7 @@ public class UserServiceImpl implements UserService {
         AvatarVoice avatarVoice = user.getAvatarVoice();
 
         if (avatarVoice == null) {
-            responseInfo.setStatus("fail");
+            responseInfo.setState("fail");
             responseInfo.setReason("error");
             return responseInfo;
         }
@@ -423,14 +455,69 @@ public class UserServiceImpl implements UserService {
                 avatarVoiceDao.save(avatarVoice);
                 break;
             default:
-                responseInfo.setStatus("fail");
+                responseInfo.setState("fail");
                 responseInfo.setReason("wrong cardflag");
                 return responseInfo;
         }
 
-        responseInfo.setStatus("successful");
+        responseInfo.setState("successful");
         responseInfo.setReason("");
         return responseInfo;
+    }
+
+    @Override
+    public Map publishActivity(ActivityVo activityVo) {
+        User user = userDao.findByToken(activityVo.getToken());
+        Activity activity = mapper.map(activityVo, Activity.class);
+        activity.setAuthorUser(user);
+        activityDao.save(activity);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", activity.getId());
+        result.put("state", "successful");
+        result.put("reason", "");
+        return result;
+    }
+
+    @Override
+    public Map likeActivity(String token, Long activityId) {
+        User user = userDao.findByToken(token);
+        Long userId = user.getId();
+
+        javax.persistence.Query query = entityManager.createNativeQuery("insert into t_like_user_activity(user_id,activity_id) VALUES(?1,?2)");
+        query.setParameter(1, userId);
+        query.setParameter(2, activityId);
+
+        query.executeUpdate();
+
+        int number = activityDao.findOne(activityId).getLikeUsers().size();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("state", "successful");
+        result.put("reason", "");
+        result.put("likenumber", number);
+
+
+        return result;
+    }
+
+    @Override
+    public Map unLikeActivity(String token, Long activityId) {
+        User user = userDao.findByToken(token);
+        Long userId = user.getId();
+
+        javax.persistence.Query query = entityManager.createNativeQuery("DELETE FROM t_like_user_activity WHERE user_id = ?1 and activity_id =?2 ");
+        query.setParameter(1, userId);
+        query.setParameter(2, activityId);
+        query.executeUpdate();
+
+        int number = activityDao.findOne(activityId).getLikeUsers().size();
+        Map<String, Object> result = new HashMap<>();
+        result.put("state", "successful");
+        result.put("reason", "");
+        result.put("likenumber", number);
+
+        return result;
     }
 
     @Override

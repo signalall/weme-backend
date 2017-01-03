@@ -2,8 +2,10 @@ package cn.seu.weme.dao;
 
 import cn.seu.weme.entity.User;
 import org.hibernate.annotations.SQLInsert;
+import org.hibernate.validator.constraints.ParameterScriptAssert;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Created by LCN on 2016-12-17.
@@ -20,6 +22,11 @@ public interface UserDao extends CrudRepository<User, Long> {
 
     public User findByToken(String token);
 
-//    @Query(value = "insert into t_follower_followed(follower_id,followed_id) VALUES(?1,?2)",nativeQuery = true)
-//    public void followUser(Long followerId, Long followedId);
+    @Query(value = "select count(*) from t_attend_user_activity where user_id =:userId and activity_id=:activityId",nativeQuery = true)
+    public int isAttendActivity(@Param("userId") Long userId,@Param("activityId") Long activityId);
+
+
+    @Query(value = "select count(*) from t_like_user_activity where user_id =:userId and activity_id=:activityId",nativeQuery = true)
+    public int isLikeActivity(@Param("userId") Long userId,@Param("activityId") Long activityId);
+
 }

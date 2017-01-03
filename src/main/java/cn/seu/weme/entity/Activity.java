@@ -35,7 +35,7 @@ public class Activity {
     private Date timestamp;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "author_id")
     private User authorUser; //发起活动者
 

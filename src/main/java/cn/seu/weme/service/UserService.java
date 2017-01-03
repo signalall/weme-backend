@@ -6,7 +6,10 @@ import cn.seu.weme.dto.PersonImageVo;
 import cn.seu.weme.dto.SchoolInfoVo;
 import cn.seu.weme.dto.UserInfoVo;
 import cn.seu.weme.dto.UserVo;
+import cn.seu.weme.dto.old.ActivityVo;
 import org.apache.catalina.connector.Response;
+
+import java.util.Map;
 
 /**
  * Created by LCN on 2016-12-17.
@@ -23,7 +26,13 @@ public interface UserService {
 
     public ResultInfo getAllUsers();
 
-    public ResultInfo attendActity(Long userId, Long activityId);
+    public ResultInfo attendActityV2(Long userId, Long activityId);
+
+    public ResponseInfo attendActivity(String token, Long activityId);
+
+
+    public ResponseInfo unAttendActivity(String token, Long activityId);
+
 
     public ResultInfo attendActivity2(Long userId, Long activityId);
 
@@ -60,5 +69,11 @@ public interface UserService {
 
     public ResponseInfo editPreferenceInfo(String token, String hobby, String preference);
 
-    public ResponseInfo editCardSetting(String token,String cardflag);
+    public ResponseInfo editCardSetting(String token, String cardflag);
+
+    public Map publishActivity(ActivityVo activityVo);
+
+    public Map likeActivity(String token, Long activityId);
+
+    public Map unLikeActivity(String token, Long activityId);
 }

@@ -1,7 +1,7 @@
 package cn.seu.weme.controller;
 
 import cn.seu.weme.common.result.ResultInfo;
-import cn.seu.weme.dto.ActivityVo;
+import cn.seu.weme.dto.old.ActivityVo;
 import cn.seu.weme.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping(value = "/activities")
-public class ActivityController {
+public class ActivityControllerV2 {
 
     @Autowired
     private ActivityService activityService;
