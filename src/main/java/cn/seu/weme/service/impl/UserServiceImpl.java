@@ -396,9 +396,9 @@ public class UserServiceImpl implements UserService {
         }
 
         if (user.getCertification()) {
-            if (user.getSchool() != userVo.getSchool() ||
-                    user.getDepartment() != userVo.getDepartment() ||
-                    user.getDegree() != userVo.getDegree()) {
+            if (!Objects.equals(user.getSchool(), userVo.getSchool()) ||
+                    !Objects.equals(user.getDepartment(), userVo.getDepartment()) ||
+                    !Objects.equals(user.getDegree(), userVo.getDegree())) {
                 responseInfo.setState("fail");
                 responseInfo.setReason("已认证用户不能修改学校信息");
                 return responseInfo;
@@ -605,7 +605,7 @@ public class UserServiceImpl implements UserService {
         Long userId = user.getId();
         List<UserImage> userImages = new ArrayList<>();
         if (imageId == 0L) {
-//            userImages = userImageDao.getPersonalImages(userId);
+            userImages = userImageDao.getPersonalImages(userId);
         } else {
             userImages = userImageDao.getPersonalImages2(userId, imageId);
         }

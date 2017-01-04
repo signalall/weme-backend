@@ -3,16 +3,17 @@ package cn.seu.weme.entity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.jboss.logging.annotations.Pos;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by LCN on 2016-12-18.
  */
 @Entity
-@Table(name="t_comment")
+@Table(name = "t_comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,7 +30,28 @@ public class Comment {
     private Post post;
 
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "comment",targetEntity = CommentImage.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Comment.class)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Comment.class)
+    @JoinColumn(name = "authoruser_id")
+    private User authorUser;
+
+    public User getAuthorUser() {
+        return authorUser;
+    }
+
+    public void setAuthorUser(User authorUser) {
+        this.authorUser = authorUser;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Activity.class)
+    @JoinColumn(name = "activity_id")
+    private Activity activity;
+
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment", targetEntity = CommentImage.class)
     @LazyCollection(
             LazyCollectionOption.EXTRA
     )
@@ -46,6 +68,14 @@ public class Comment {
 
     public Long getId() {
         return id;
+    }
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
     }
 
     public void setId(Long id) {
@@ -90,5 +120,13 @@ public class Comment {
 
     public void setUserLikeCommentRelations(List<UserLikeCommentRelation> userLikeCommentRelations) {
         this.userLikeCommentRelations = userLikeCommentRelations;
+    }
+
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 }

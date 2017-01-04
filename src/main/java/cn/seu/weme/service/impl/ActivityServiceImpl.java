@@ -3,14 +3,9 @@ package cn.seu.weme.service.impl;
 import cn.seu.weme.common.result.ResponseInfo;
 import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.common.result.ResultUtil;
-import cn.seu.weme.dao.ActivityDao;
-import cn.seu.weme.dao.UserAttendActivityRelationDao;
-import cn.seu.weme.dao.UserDao;
+import cn.seu.weme.dao.*;
 import cn.seu.weme.dto.old.ActivityVo;
-import cn.seu.weme.entity.Activity;
-import cn.seu.weme.entity.User;
-import cn.seu.weme.entity.UserAttendActivityRelation;
-import cn.seu.weme.entity.UserLikeActivityRelation;
+import cn.seu.weme.entity.*;
 import cn.seu.weme.service.ActivityService;
 import org.joda.time.DateTime;
 import org.modelmapper.ModelMapper;
@@ -40,6 +35,12 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private UserAttendActivityRelationDao userAttendActivityRelationDao;
+
+    @Autowired
+    private UserLikeCommentRelationDao userLikeCommentRelationDao;
+
+    @Autowired
+    private CommentDao commentDao;
 
     @Autowired
     private UserDao userDao;
@@ -356,8 +357,119 @@ public class ActivityServiceImpl implements ActivityService {
         responseInfo.setState("successful");
         responseInfo.setReason("");
         responseInfo.setResult("1");
+        responseInfo.setResult(data);
 
-        return null;
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo setPassUser(String token, Long activityId, List<Long> userIds) {
+        User user = userDao.findByToken(token);
+        Activity activity = activityDao.findOne(activityId);
+        ResponseInfo responseInfo = new ResponseInfo();
+        if (!user.getId().equals(activity.getAuthorUser().getId())) {
+            responseInfo.setState("fail");
+            responseInfo.setReason("非法用户");
+            responseInfo.setResult("");
+            return responseInfo;
+        }
+
+
+        for (Long id : userIds) {
+            UserAttendActivityRelation userattendActivityRelation =
+                    userAttendActivityRelationDao.findUserAttendActivityRelation(id, activityId);
+
+            if (userattendActivityRelation != null) {
+                userattendActivityRelation.setState(1);
+                userAttendActivityRelationDao.save(userattendActivityRelation);
+            }
+
+        }
+
+        responseInfo.setState("successful");
+        responseInfo.setReason("");
+        responseInfo.setResult("");
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo deletePassUser(String token, Long activityId, List<Long> userIds) {
+        User user = userDao.findByToken(token);
+        Activity activity = activityDao.findOne(activityId);
+        ResponseInfo responseInfo = new ResponseInfo();
+        if (!user.getId().equals(activity.getAuthorUser().getId())) {
+            responseInfo.setState("fail");
+            responseInfo.setReason("非法用户");
+            responseInfo.setResult("");
+            return responseInfo;
+        }
+
+
+        for (Long id : userIds) {
+            UserAttendActivityRelation userattendActivityRelation =
+                    userAttendActivityRelationDao.findUserAttendActivityRelation(id, activityId);
+
+            if (userattendActivityRelation != null) {
+                userattendActivityRelation.setState(0);
+                userAttendActivityRelationDao.save(userattendActivityRelation);
+            }
+
+        }
+
+        responseInfo.setState("successful");
+        responseInfo.setReason("");
+        responseInfo.setResult("");
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo commentToActivity(String token, Long activityId, String body) {
+        User user = userDao.findByToken(token);
+        Activity activity = activityDao.findOne(activityId);
+        Comment comment = new Comment();
+        comment.setAuthorUser(user);
+        comment.setActivity(activity);
+        comment.setContent(body);
+        commentDao.save(comment);
+
+        ResponseInfo responseInfo = new ResponseInfo();
+        responseInfo.setState("successful");
+        responseInfo.setReason("");
+        responseInfo.setResult("");
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo commentToActivityComent(String token, Long commentId, String body) {
+        User user = userDao.findByToken(token);
+        Comment comment = commentDao.findOne(commentId);
+
+        Comment commentNew = new Comment();
+        commentNew.setContent(body);
+        commentNew.setComment(comment);
+        commentNew.setAuthorUser(user);
+        commentDao.save(commentNew);
+
+        ResponseInfo responseInfo = new ResponseInfo();
+        responseInfo.setState("successful");
+        responseInfo.setReason("");
+        responseInfo.setResult("");
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo likeAcivityComment(String token, Long commentId) {
+        User user = userDao.findByToken(token);
+        Comment comment = commentDao.findOne(commentId);
+
+        UserLikeCommentRelation userLikeCommentRelation = new UserLikeCommentRelation(user, comment);
+        userLikeCommentRelationDao.save(userLikeCommentRelation);
+
+        ResponseInfo responseInfo = new ResponseInfo();
+        responseInfo.setState("successful");
+        responseInfo.setReason("");
+        responseInfo.setResult("");
+        return responseInfo;
     }
 
     private ActivityVo activityToVo(Activity activity, Long userId) {
