@@ -37,7 +37,7 @@ public class User {
     private String name;
     @Column(length = 32)
     private String gender;
-    @Column(length = 32)
+    @Column(length = 32, unique = true)
     private String phone;
     @Column(length = 32)
     private String birthday;
@@ -110,7 +110,6 @@ public class User {
     private List<LikeUserRelation> likedRelations = new ArrayList<>();
 
 
-
     //用户发表的帖子
     @OneToMany(cascade = CascadeType.REMOVE, targetEntity = Post.class, mappedBy = "publishUser",
             fetch = FetchType.LAZY)
@@ -127,7 +126,6 @@ public class User {
             LazyCollectionOption.EXTRA
     )
     private List<UserLikePostRelation> userLikePostRelations = new ArrayList<>();
-
 
 
     @OneToOne(fetch = FetchType.LAZY, targetEntity = AvatarVoice.class, cascade = CascadeType.ALL)

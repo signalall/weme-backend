@@ -49,7 +49,7 @@ public class UserController {
     public ResponseInfo login(@RequestBody JSONObject jsonObject) {
         String username = jsonObject.getString("username");
         String password = jsonObject.getString("password");
-        return userService.login(username,password);
+        return userService.login(username, password);
     }
 
 

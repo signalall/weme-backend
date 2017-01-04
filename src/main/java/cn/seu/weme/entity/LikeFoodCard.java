@@ -7,7 +7,7 @@ import java.util.Date;
  * Created by LCN on 2017-1-3.
  */
 @Entity
-@Table(name = "t_like_user_foodcard",
+@Table(name = "t_user_like_foodcard",
         uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "foodcard_id"}))
 public class LikeFoodCard {
     @Id

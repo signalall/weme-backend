@@ -1,5 +1,6 @@
 package cn.seu.weme.service;
 
+import cn.seu.weme.common.result.ResponseInfo;
 import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.dto.old.ActivityVo;
 
@@ -39,4 +40,8 @@ public interface ActivityService {
     public Map getPublishActivityDetail(String token, Long activityId);
 
     public Map getActivityStatistic(String token, Long activityId);
+
+    public ResponseInfo validateActivityUser(String token, Long activityId, Long userId);
+
+    public ResponseInfo getActivityAttendUsers(String token, Long activityId, int page);
 }

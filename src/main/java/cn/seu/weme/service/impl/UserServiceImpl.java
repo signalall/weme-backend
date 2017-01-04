@@ -48,6 +48,13 @@ public class UserServiceImpl implements UserService {
     private FollowRelationDao followRelationDao;
 
     @Autowired
+    private UserAttendActivityRelationDao userAttendActivityRelationDao;
+
+
+    @Autowired
+    private UserLikeActivityRelationDao userLikeActivityRelationDao;
+
+    @Autowired
     private ModelMapper mapper;
 
     @PersistenceContext
@@ -69,12 +76,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseInfo attendActivity(String token, Long activityId) {
         User user = userDao.findByToken(token);
-
-        javax.persistence.Query query = entityManager.createNativeQuery("insert into t_attend_user_activity(user_id,activity_id) VALUES(?1,?2)");
-        query.setParameter(1, user.getId());
-        query.setParameter(2, activityId);
-
-        query.executeUpdate();
+        Activity activity = activityDao.findOne(activityId);
+        UserAttendActivityRelation userAttendActivityRelation = new UserAttendActivityRelation(user, activity);
+        userAttendActivityRelationDao.save(userAttendActivityRelation);
 
         ResponseInfo responseInfo = new ResponseInfo();
         responseInfo.setState("successful");
@@ -86,11 +90,11 @@ public class UserServiceImpl implements UserService {
     public ResponseInfo unAttendActivity(String token, Long activityId) {
         User user = userDao.findByToken(token);
 
-        javax.persistence.Query query = entityManager.createNativeQuery("DELETE FROM t_attend_user_activity WHERE user_id =?1 AND activity_id = ?2");
+        javax.persistence.Query query = entityManager.createNativeQuery("DELETE FROM t_user_attend_activity_relation WHERE user_id =?1 AND activity_id = ?2");
         query.setParameter(1, user.getId());
         query.setParameter(2, activityId);
-
         query.executeUpdate();
+
 
         ResponseInfo responseInfo = new ResponseInfo();
         responseInfo.setState("successful");
@@ -208,7 +212,7 @@ public class UserServiceImpl implements UserService {
             return responseInfo;
         }
 
-        String token = TokenProcessor.generateToken(phone + code + password);
+        String token = JWTUtils.generateToken(phone + code + password);
         String salt = CryptoUtils.getSalt();
         String hashedPassword = CryptoUtils.getHash(password, salt);
         User user = new User(phone, hashedPassword, salt, token);
@@ -236,7 +240,7 @@ public class UserServiceImpl implements UserService {
             return ResultUtil.createFail("验证码超时!");
         }
 
-        String token = TokenProcessor.generateToken(phone + code + newPassword);
+        String token = JWTUtils.generateToken(phone + code + newPassword);
 
         String salt = CryptoUtils.getSalt();
         String hashedPassword = CryptoUtils.getHash(newPassword, salt);
@@ -262,6 +266,15 @@ public class UserServiceImpl implements UserService {
             responseInfo.setReason("验证码无效");
             return responseInfo;
         }
+
+        String token = JWTUtils.generateToken(phone + code + newPassword);
+        String salt = CryptoUtils.getSalt();
+        String hashedPassword = CryptoUtils.getHash(newPassword, salt);
+        user.setToken(token);
+        user.setPassword(hashedPassword);
+        user.setSalt(salt);
+        userDao.save(user);
+
         responseInfo.setState("successful");
         responseInfo.setReason("");
         responseInfo.setToken(user.getToken());
@@ -300,7 +313,6 @@ public class UserServiceImpl implements UserService {
             responseInfo.setReason("用户名密码错误");
             return responseInfo;
         }
-
 
         responseInfo.setState("successful");
         responseInfo.setReason("");
@@ -484,43 +496,41 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map likeActivity(String token, Long activityId) {
-//        User user = userDao.findByToken(token);
-//        Long userId = user.getId();
-//
-//        javax.persistence.Query query = entityManager.createNativeQuery("insert into t_like_user_activity(user_id,activity_id) VALUES(?1,?2)");
-//        query.setParameter(1, userId);
-//        query.setParameter(2, activityId);
-//
-//        query.executeUpdate();
-//
-//        int number = activityDao.findOne(activityId).getLikeUsers().size();
-//
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("state", "successful");
-//        result.put("reason", "");
-//        result.put("likenumber", number);
+        User user = userDao.findByToken(token);
+        Activity activity = activityDao.findOne(activityId);
+
+        UserLikeActivityRelation userLikeActivityRelation = new UserLikeActivityRelation(user, activity);
+
+        userLikeActivityRelationDao.save(userLikeActivityRelation);
+
+        int number = activityDao.findOne(activityId).getUserLikeActivityRelations().size();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("state", "successful");
+        result.put("reason", "");
+        result.put("likenumber", number);
 
 
-        return null;
+        return result;
     }
 
     @Override
     public Map unLikeActivity(String token, Long activityId) {
-//        User user = userDao.findByToken(token);
-//        Long userId = user.getId();
-//
-//        javax.persistence.Query query = entityManager.createNativeQuery("DELETE FROM t_like_user_activity WHERE user_id = ?1 and activity_id =?2 ");
-//        query.setParameter(1, userId);
-//        query.setParameter(2, activityId);
-//        query.executeUpdate();
-//
-//        int number = activityDao.findOne(activityId).getLikeUsers().size();
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("state", "successful");
-//        result.put("reason", "");
-//        result.put("likenumber", number);
+        User user = userDao.findByToken(token);
+        Long userId = user.getId();
 
-        return null;
+        javax.persistence.Query query = entityManager.createNativeQuery("DELETE FROM t_user_like_activity_relation WHERE user_id = ?1 and activity_id =?2 ");
+        query.setParameter(1, userId);
+        query.setParameter(2, activityId);
+        query.executeUpdate();
+
+        int number = activityDao.findOne(activityId).getUserLikeActivityRelations().size();
+        Map<String, Object> result = new HashMap<>();
+        result.put("state", "successful");
+        result.put("reason", "");
+        result.put("likenumber", number);
+
+        return result;
     }
 
 

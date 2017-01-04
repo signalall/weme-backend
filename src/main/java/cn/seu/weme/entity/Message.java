@@ -26,6 +26,7 @@ public class Message {
 
     private String text;//不支持图片类型
 
+    private boolean hasImage = false; //是否包含图片
 
     @Column(columnDefinition = "Boolean default false")
     private boolean state = false;
@@ -75,13 +76,27 @@ public class Message {
         this.state = state;
     }
 
-
-
     public Date getTimestamp() {
         return timestamp;
     }
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean isHasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
+    }
+
+    public boolean isState() {
+        return state;
+    }
+
+    public void setState(boolean state) {
+        this.state = state;
     }
 }

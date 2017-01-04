@@ -52,4 +52,18 @@ public class JodaTest {
 
 
     }
+
+
+
+    @Test
+    public void testStartEndOfDay(){
+        //获取今天还剩多长时间
+        DateTime nowTime = new DateTime();
+        DateTime endOfDay = nowTime.millisOfDay().withMaximumValue();
+        System.out.println(endOfDay.getMillis() - nowTime.getMillis());
+        DateTime startOfDay = nowTime.withTimeAtStartOfDay();
+        System.out.println(startOfDay);
+        System.out.println(endOfDay);
+
+    }
 }

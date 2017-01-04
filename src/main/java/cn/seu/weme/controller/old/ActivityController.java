@@ -130,7 +130,27 @@ public class ActivityController {
     public Map getActivityStatistic(@RequestBody JSONObject jsonObject) {
         String token = jsonObject.getString("token");
         Long activityId = jsonObject.getLong("activityid");
+        return activityService.getActivityStatistic(token, activityId);
+    }
+
+
+    @RequestMapping(value = "/validateactivityuser", method = RequestMethod.POST)
+    public ResponseInfo validateActivityUser(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long activityId = jsonObject.getLong("activityid");
+        Long userId = jsonObject.getLong("userId");
+        return activityService.validateActivityUser(token, activityId, userId);
+    }
+
+
+    @RequestMapping(value = "/getactivityattentuser", method = RequestMethod.POST)
+    public ResponseInfo getActivityAttendUsers(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long activityId = jsonObject.getLong("activityid");
+        int page = jsonObject.getInt("page");
+        // TODO: 2017-1-4
         return null;
     }
+
 
 }

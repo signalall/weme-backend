@@ -31,6 +31,15 @@ public class UserLikeActivityRelation {
     @CreationTimestamp
     private Date timestamp;
 
+
+    public UserLikeActivityRelation(User user, Activity activity) {
+        this.user = user;
+        this.activity = activity;
+    }
+
+    public UserLikeActivityRelation() {
+    }
+
     public Long getId() {
         return id;
     }

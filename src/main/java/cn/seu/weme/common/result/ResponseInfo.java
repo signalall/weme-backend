@@ -5,13 +5,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 /**
  * Created by LCN on 2017-1-3.
  */
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResponseInfo {
     private String state;
     private String reason;
     private Long id;
     private String token;
     private String gender;
+
+    private Object result;
+    private String pages;
 
     public String getGender() {
         return gender;
@@ -59,5 +62,21 @@ public class ResponseInfo {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Object getResult() {
+        return result;
+    }
+
+    public void setResult(Object result) {
+        this.result = result;
+    }
+
+    public String getPages() {
+        return pages;
+    }
+
+    public void setPages(String pages) {
+        this.pages = pages;
     }
 }

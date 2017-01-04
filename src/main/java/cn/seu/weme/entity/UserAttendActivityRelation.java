@@ -27,9 +27,19 @@ public class UserAttendActivityRelation {
     @JoinColumn(name = "activity_id")
     private Activity activity;
 
+    private int state = 0;
+
 
     @CreationTimestamp
     private Date timestamp;
+
+    public UserAttendActivityRelation() {
+    }
+
+    public UserAttendActivityRelation(User user, Activity activity) {
+        this.user = user;
+        this.activity = activity;
+    }
 
     public Long getId() {
         return id;
@@ -61,5 +71,13 @@ public class UserAttendActivityRelation {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 }

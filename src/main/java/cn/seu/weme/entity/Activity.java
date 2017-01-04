@@ -60,8 +60,16 @@ public class Activity {
     @Column(length = 32)
     private String label;
 
-    @Column(columnDefinition = "Boolean default false")
-    private boolean passFlag = false;
+
+    private int passFlag = 0;
+
+    public int getPassFlag() {
+        return passFlag;
+    }
+
+    public void setPassFlag(int passFlag) {
+        this.passFlag = passFlag;
+    }
 
     @CreationTimestamp
     private Date timestamp;
@@ -212,13 +220,7 @@ public class Activity {
         this.label = label;
     }
 
-    public boolean isPassFlag() {
-        return passFlag;
-    }
 
-    public void setPassFlag(boolean passFlag) {
-        this.passFlag = passFlag;
-    }
 
     public Date getTimestamp() {
         return timestamp;
@@ -259,4 +261,6 @@ public class Activity {
     public void setAvtivityImages(Set<ActivityImage> avtivityImages) {
         this.avtivityImages = avtivityImages;
     }
+
+
 }
