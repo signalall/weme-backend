@@ -236,91 +236,91 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Map getPublishActivityDetail(String token, Long activityId) {
-        Long userId = userDao.findByToken(token).getId();
-        Activity activity = activityDao.findOne(activityId);
-        ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
-        if (activity.getAuthorUser() != null) {
-            activityVo.setSchool(activity.getAuthorUser().getSchool());
-            activityVo.setGender(activity.getAuthorUser().getGender());
-        }
-        if (activity.getPassflag().equals(1)) {
-            activityVo.setPassState("已通过");
-        } else if (activity.getPassflag().equals(2)) {
-            activityVo.setPassState("未通过");
-        } else {
-            activityVo.setPassState("审核中");
-        }
-        //todo poster 图片
+//        Long userId = userDao.findByToken(token).getId();
+//        Activity activity = activityDao.findOne(activityId);
+//        ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
+//        if (activity.getAuthorUser() != null) {
+//            activityVo.setSchool(activity.getAuthorUser().getSchool());
+//            activityVo.setGender(activity.getAuthorUser().getGender());
+//        }
+//        if (activity.getPassflag().equals(1)) {
+//            activityVo.setPassState("已通过");
+//        } else if (activity.getPassflag().equals(2)) {
+//            activityVo.setPassState("未通过");
+//        } else {
+//            activityVo.setPassState("审核中");
+//        }
+//        //todo poster 图片
+//
+//        activityVo.setSignnumber(activity.getAttendUsers().size() + "");
+//
+//        Map<String, Object> result = new HashMap<>();
+//        result.put("result", activityVo);
+//        result.put("state", "successful");
+//        result.put("pages", 0);
+//        result.put("reason", "");
 
-        activityVo.setSignnumber(activity.getAttendUsers().size() + "");
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("result", activityVo);
-        result.put("state", "successful");
-        result.put("pages", 0);
-        result.put("reason", "");
-
-        return result;
+        return null;
     }
 
     @Override
     public Map getActivityStatistic(String token, Long activityId) {
-        Activity activity = activityDao.findOne(activityId);
-
-        Query query = entityManager.createNativeQuery("select count(a) from Activity as a WHERE a.id = ?1 WHERE TIMESTAMP BETWEEN ?2 AND ?3");
-        query.setParameter(1, activityId);
-
-
-        int registeredTotal = query.executeUpdate();
-        int likedTotal = activityDao.findOne(activityId).getLikeUsers().size();
-
-
-        Map<String, Object> data = new HashMap<>();
-
-        data.put("registeredTotal", registeredTotal);
-        data.put("likedTotal", likedTotal);
-        data.put("activity", activity.getTitle());
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("result", data);
-        result.put("state", "successful");
-        result.put("reason", "");
-        return result;
+//        Activity activity = activityDao.findOne(activityId);
+//
+//        Query query = entityManager.createNativeQuery("select count(a) from Activity as a WHERE a.id = ?1 WHERE TIMESTAMP BETWEEN ?2 AND ?3");
+//        query.setParameter(1, activityId);
+//
+//
+//        int registeredTotal = query.executeUpdate();
+//        int likedTotal = activityDao.findOne(activityId).getLikeUsers().size();
+//
+//
+//        Map<String, Object> data = new HashMap<>();
+//
+//        data.put("registeredTotal", registeredTotal);
+//        data.put("likedTotal", likedTotal);
+//        data.put("activity", activity.getTitle());
+//
+//        Map<String, Object> result = new HashMap<>();
+//        result.put("result", data);
+//        result.put("state", "successful");
+//        result.put("reason", "");
+        return null;
     }
 
     private ActivityVo activityToVo(Activity activity, Long userId) {
-        ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
-        if (activity.getAuthorUser() != null) {
-            activityVo.setSchool(activity.getAuthorUser().getSchool());
-            activityVo.setGender(activity.getAuthorUser().getGender());
-        }
-        activityVo.setSignnumber(activity.getAttendUsers().size() + "");
-
-        if (userDao.isAttendActivity(userId, activity.getId()) == 0) {
-            activityVo.setSignstate("no");
-        } else {
-            activityVo.setSignstate("yes");
-        }
-        return activityVo;
+//        ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
+//        if (activity.getAuthorUser() != null) {
+//            activityVo.setSchool(activity.getAuthorUser().getSchool());
+//            activityVo.setGender(activity.getAuthorUser().getGender());
+//        }
+//        activityVo.setSignnumber(activity.getAttendUsers().size() + "");
+//
+//        if (userDao.isAttendActivity(userId, activity.getId()) == 0) {
+//            activityVo.setSignstate("no");
+//        } else {
+//            activityVo.setSignstate("yes");
+//        }
+        return null;
     }
 
 
     private ActivityVo activityToVo2(Activity activity, Long userId) {
-        ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
-        if (activity.getAuthorUser() != null) {
-            activityVo.setSchool(activity.getAuthorUser().getSchool());
-            activityVo.setGender(activity.getAuthorUser().getGender());
-        }
-        activityVo.setSignnumber(activity.getAttendUsers().size() + "");
+//        ActivityVo activityVo = mapper.map(activity, ActivityVo.class);
+//        if (activity.getAuthorUser() != null) {
+//            activityVo.setSchool(activity.getAuthorUser().getSchool());
+//            activityVo.setGender(activity.getAuthorUser().getGender());
+//        }
+//        activityVo.setSignnumber(activity.getAttendUsers().size() + "");
+//
+//        if (activity.getPassflag().equals(1)) {
+//            activityVo.setPassState("已通过");
+//        } else if (activity.getPassflag().equals(2)) {
+//            activityVo.setPassState("未通过");
+//        } else {
+//            activityVo.setPassState("审核中");
+//        }
 
-        if (activity.getPassflag().equals(1)) {
-            activityVo.setPassState("已通过");
-        } else if (activity.getPassflag().equals(2)) {
-            activityVo.setPassState("未通过");
-        } else {
-            activityVo.setPassState("审核中");
-        }
-
-        return activityVo;
+        return null;
     }
 }

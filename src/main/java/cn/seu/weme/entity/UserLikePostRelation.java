@@ -1,5 +1,7 @@
 package cn.seu.weme.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -7,25 +9,24 @@ import java.util.Date;
  * Created by LCN on 2017-1-3.
  */
 @Entity
-@Table(name = "t_like_user_foodcard",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "foodcard_id"}))
-public class LikeFoodCard {
+@Table(name = "t_user_like_post_relation",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "post_id"}))
+public class UserLikePostRelation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
+
+    @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne(targetEntity = Post.class)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = FoodCard.class)
-    @JoinColumn(name = "foodcard_id")
-    private FoodCard foodCard;
-
-
-    @Column
-    @org.hibernate.annotations.CreationTimestamp
+    @CreationTimestamp
     private Date timestamp;
 
     public Long getId() {
@@ -44,12 +45,12 @@ public class LikeFoodCard {
         this.user = user;
     }
 
-    public FoodCard getFoodCard() {
-        return foodCard;
+    public Post getPost() {
+        return post;
     }
 
-    public void setFoodCard(FoodCard foodCard) {
-        this.foodCard = foodCard;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public Date getTimestamp() {

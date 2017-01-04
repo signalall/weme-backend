@@ -1,5 +1,9 @@
 package cn.seu.weme.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +12,7 @@ import java.util.List;
  * Created by LCN on 2017-1-3.
  */
 @Entity
+@Table(name = "t_foodcard")
 public class FoodCard {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,14 +29,20 @@ public class FoodCard {
     private String latitude;
     private String price;
     private String comment;
-    private String passflag;
-    private boolean disable;
+
+    private boolean passFlage;
+
+    @Column(columnDefinition = "Boolean default false")
+    private boolean disable = false;
+    @CreationTimestamp
     private Date timestamp;
-    private int likeNumber;
 
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = LikeFoodCard.class,mappedBy = "foodCard")
-    private List<LikeFoodCard> likeFoodCard;
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<LikeFoodCard> likeFoodCards;
 
 
     public Long getId() {
@@ -98,14 +109,6 @@ public class FoodCard {
         this.comment = comment;
     }
 
-    public String getPassflag() {
-        return passflag;
-    }
-
-    public void setPassflag(String passflag) {
-        this.passflag = passflag;
-    }
-
     public boolean isDisable() {
         return disable;
     }
@@ -122,20 +125,11 @@ public class FoodCard {
         this.timestamp = timestamp;
     }
 
-    public int getLikeNumber() {
-        return likeNumber;
+    public List<LikeFoodCard> getLikeFoodCards() {
+        return likeFoodCards;
     }
 
-    public void setLikeNumber(int likeNumber) {
-        this.likeNumber = likeNumber;
-    }
-
-
-    public List<LikeFoodCard> getLikeFoodCard() {
-        return likeFoodCard;
-    }
-
-    public void setLikeFoodCard(List<LikeFoodCard> likeFoodCard) {
-        this.likeFoodCard = likeFoodCard;
+    public void setLikeFoodCards(List<LikeFoodCard> likeFoodCards) {
+        this.likeFoodCards = likeFoodCards;
     }
 }

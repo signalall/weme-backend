@@ -1,9 +1,8 @@
 package cn.seu.weme.entity;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -19,8 +18,10 @@ public abstract class BaseImage {
 
     private String thumbnailUrl;
 
-    private Boolean disable;
+    @Column(columnDefinition = "Boolean default false")
+    private Boolean disable = false;
 
+    @CreationTimestamp
     private Date timestamp;
 
     public Date getTimestamp() {
@@ -62,4 +63,6 @@ public abstract class BaseImage {
     public void setDisable(Boolean disable) {
         this.disable = disable;
     }
+
+
 }

@@ -1,8 +1,11 @@
 package cn.seu.weme.common.result;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 /**
  * Created by LCN on 2017-1-3.
  */
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class ResponseInfo {
     private String state;
     private String reason;

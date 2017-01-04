@@ -1,7 +1,6 @@
 package cn.seu.weme.dao;
 
 import cn.seu.weme.entity.Activity;
-import cn.seu.weme.entity.Person;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

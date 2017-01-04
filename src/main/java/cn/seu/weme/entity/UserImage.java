@@ -1,15 +1,13 @@
 package cn.seu.weme.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * Created by LCN on 2016-12-21.
  */
 @Entity
-public class PersonalImage extends BaseImage {
+@Table(name = "t_user_image")
+public class UserImage extends BaseImage {
 
     @ManyToOne(targetEntity = User.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_id")

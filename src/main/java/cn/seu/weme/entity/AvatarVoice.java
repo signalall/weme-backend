@@ -1,29 +1,40 @@
 package cn.seu.weme.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by LCN on 2017-1-3.
  */
 @Entity
+@Table(name = "t_avatar_voice")
 public class AvatarVoice {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(length = 32)
     private String name;
+
+    @Column(length = 32)
     private String gender;
 
     private String avatarUrl;
     private String voiceUrl;
-    private Boolean cardFlag;
-    private Boolean disable;
+
+    private boolean cardFlag = false;
+    private boolean disable = false;
 
     private Integer voiceNumber;
     private Integer avatarNumber;
 
+    @CreationTimestamp
+    private Date timestamp;
 
-    @OneToOne(fetch = FetchType.LAZY,targetEntity = User.class,mappedBy = "avatarVoice")
+
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = User.class, mappedBy = "avatarVoice")
     private User user;
 
 
@@ -106,5 +117,13 @@ public class AvatarVoice {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

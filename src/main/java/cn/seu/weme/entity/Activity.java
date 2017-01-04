@@ -1,37 +1,69 @@
 package cn.seu.weme.entity;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.*;
 
 /**
  * Created by LCN on 2016-12-17.
  */
 @Entity
+@Table(name = "t_activity")
 public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(length = 32)
     private String top;
+
+    @Column(length = 32)
     private String title;
+
+    @Column(length = 32)
     private String time;  //活动时间
+
+    @Column(length = 32)
     private String location;
+
+    @Column(length = 32)
     private String number; //8~10
+
     private Integer signnumber;
+
+    @Column(length = 32)
     private boolean state;
+
     private String sponser;
-    private Boolean disable;
+
+    @Column(columnDefinition = "Boolean default false")
+    private boolean disable = false;
+
+
+    @Column(length = 32)
     private String remark;
-    private Boolean whetherimage;
+
+
+    @Column(columnDefinition = "Boolean default false")
+    private boolean whetherImage = false;
+
     private String advertise;
+
+    @Lob
     private String detail;
+
+
+    @Column(length = 32)
     private String label;
-    private String passflag;
-    private Integer likenumbers;
+
+    @Column(columnDefinition = "Boolean default false")
+    private boolean passFlag = false;
+
+    @CreationTimestamp
     private Date timestamp;
 
 
@@ -40,40 +72,25 @@ public class Activity {
     private User authorUser; //发起活动者
 
 
-    public Activity(String top, String title) {
-        this.top = top;
-        this.title = title;
-    }
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "t_attend_user_activity",
-            joinColumns = @JoinColumn(name = "activity_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @Fetch(FetchMode.SELECT)
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = UserAttendActivityRelation.class, mappedBy = "user",
+            fetch = FetchType.LAZY)
     @LazyCollection(
             LazyCollectionOption.EXTRA
     )
-    private Set<User> attendUsers = new HashSet<>();
+    private List<UserAttendActivityRelation> userAttendActivityRelations = new ArrayList<>();
 
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "t_like_user_activity",
-            joinColumns = @JoinColumn(name = "activity_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> likeUsers = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = UserLikeActivityRelation.class, mappedBy = "user",
+            fetch = FetchType.LAZY)
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<UserLikeActivityRelation> userLikeActivityRelations = new ArrayList<>();
 
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity", targetEntity = ActivityImage.class)
     private Set<ActivityImage> avtivityImages = new HashSet<>();
 
-
-    public Set<ActivityImage> getAvtivityImages() {
-        return avtivityImages;
-    }
-
-    public void setAvtivityImages(Set<ActivityImage> avtivityImages) {
-        this.avtivityImages = avtivityImages;
-    }
 
     public Long getId() {
         return id;
@@ -131,7 +148,7 @@ public class Activity {
         this.signnumber = signnumber;
     }
 
-    public boolean getState() {
+    public boolean isState() {
         return state;
     }
 
@@ -147,11 +164,11 @@ public class Activity {
         this.sponser = sponser;
     }
 
-    public Boolean getDisable() {
+    public boolean isDisable() {
         return disable;
     }
 
-    public void setDisable(Boolean disable) {
+    public void setDisable(boolean disable) {
         this.disable = disable;
     }
 
@@ -163,12 +180,12 @@ public class Activity {
         this.remark = remark;
     }
 
-    public Boolean getWhetherimage() {
-        return whetherimage;
+    public boolean isWhetherImage() {
+        return whetherImage;
     }
 
-    public void setWhetherimage(Boolean whetherimage) {
-        this.whetherimage = whetherimage;
+    public void setWhetherImage(boolean whetherImage) {
+        this.whetherImage = whetherImage;
     }
 
     public String getAdvertise() {
@@ -195,20 +212,12 @@ public class Activity {
         this.label = label;
     }
 
-    public String getPassflag() {
-        return passflag;
+    public boolean isPassFlag() {
+        return passFlag;
     }
 
-    public void setPassflag(String passflag) {
-        this.passflag = passflag;
-    }
-
-    public Integer getLikenumbers() {
-        return likenumbers;
-    }
-
-    public void setLikenumbers(Integer likenumbers) {
-        this.likenumbers = likenumbers;
+    public void setPassFlag(boolean passFlag) {
+        this.passFlag = passFlag;
     }
 
     public Date getTimestamp() {
@@ -219,10 +228,6 @@ public class Activity {
         this.timestamp = timestamp;
     }
 
-
-    public Activity() {
-    }
-
     public User getAuthorUser() {
         return authorUser;
     }
@@ -231,29 +236,27 @@ public class Activity {
         this.authorUser = authorUser;
     }
 
-    public Set<User> getAttendUsers() {
-        return attendUsers;
+    public List<UserAttendActivityRelation> getUserAttendActivityRelations() {
+        return userAttendActivityRelations;
     }
 
-    public void setAttendUsers(Set<User> attendUsers) {
-        this.attendUsers = attendUsers;
+    public void setUserAttendActivityRelations(List<UserAttendActivityRelation> userAttendActivityRelations) {
+        this.userAttendActivityRelations = userAttendActivityRelations;
     }
 
-    public Set<User> getLikeUsers() {
-        return likeUsers;
+    public List<UserLikeActivityRelation> getUserLikeActivityRelations() {
+        return userLikeActivityRelations;
     }
 
-    public void setLikeUsers(Set<User> likeUsers) {
-        this.likeUsers = likeUsers;
+    public void setUserLikeActivityRelations(List<UserLikeActivityRelation> userLikeActivityRelations) {
+        this.userLikeActivityRelations = userLikeActivityRelations;
     }
 
-    @Override
-    public String toString() {
-        return "Activity{" +
-                "id=" + id +
-                '}';
+    public Set<ActivityImage> getAvtivityImages() {
+        return avtivityImages;
     }
 
-
-    //    private List<Comment> comments;
+    public void setAvtivityImages(Set<ActivityImage> avtivityImages) {
+        this.avtivityImages = avtivityImages;
+    }
 }

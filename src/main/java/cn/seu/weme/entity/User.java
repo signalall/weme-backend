@@ -1,121 +1,168 @@
 package cn.seu.weme.entity;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.*;
 
 /**
  * Created by LCN on 2016-12-17.
  */
 @Entity
+@Table(name = "t_user")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private Integer age;
-    @Column(length = 30, nullable = true)
+    @Column(length = 32, unique = true)
     private String username;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private String salt;
     private String token;
+    @Column(length = 32)
     private String school;
+    @Column(length = 32)
     private String degree;
+    @Column(length = 32)
     private String department;
+    @Column(length = 32)
     private String enrollment;
     private String name;
+    @Column(length = 32)
     private String gender;
+    @Column(length = 32)
     private String phone;
+    @Column(length = 32)
     private String birthday;
+    @Column(length = 32)
     private String wechat;
+    @Column(length = 32)
     private String qq;
+    @Column(length = 32)
     private String hometown;
     private String hobby;
     private String preference;
-    private Integer weme;
-    private Boolean certification;
+
+    @Column(columnDefinition = "INT default 100")
+    private Integer weme = 100;
+    @Column(columnDefinition = "Boolean default false")
+    private boolean certification = false;
+
+    @CreationTimestamp
     private Date timestamp;
+
+    @Lob
     private String tags;
+
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = FollowRelation.class, mappedBy = "follower",
+            fetch = FetchType.LAZY)
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<FollowRelation> followerRelations = new ArrayList<>();
+
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = FollowRelation.class, mappedBy = "followed",
+            fetch = FetchType.LAZY)
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<FollowRelation> followedRelations = new ArrayList<>();
+
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = UserVisitRelation.class, mappedBy = "visiter",
+            fetch = FetchType.LAZY)
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<UserVisitRelation> visterRelations = new ArrayList<>();
+
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = UserVisitRelation.class, mappedBy = "visited",
+            fetch = FetchType.LAZY)
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<UserVisitRelation> visitedRelations = new ArrayList<>();
+
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = LikeUserRelation.class, mappedBy = "liker",
+            fetch = FetchType.LAZY)
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<LikeUserRelation> likerRelations = new ArrayList<>();
+
+
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = LikeUserRelation.class, mappedBy = "liked",
+            fetch = FetchType.LAZY)
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<LikeUserRelation> likedRelations = new ArrayList<>();
+
+
+
+    //用户发表的帖子
+    @OneToMany(cascade = CascadeType.REMOVE, targetEntity = Post.class, mappedBy = "publishUser",
+            fetch = FetchType.LAZY)
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<Post> publishedPosts = new ArrayList<>();
+
+
+    //用户喜欢的文章
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post",
+            targetEntity = UserLikePostRelation.class)
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<UserLikePostRelation> userLikePostRelations = new ArrayList<>();
+
+
 
     @OneToOne(fetch = FetchType.LAZY, targetEntity = AvatarVoice.class, cascade = CascadeType.ALL)
     private AvatarVoice avatarVoice;
 
 
-    public AvatarVoice getAvatarVoice() {
-        return avatarVoice;
-    }
-
-    public void setAvatarVoice(AvatarVoice avatarVoice) {
-        this.avatarVoice = avatarVoice;
-    }
-
-    @Basic(fetch = FetchType.LAZY)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "attendUsers")
-    @Fetch(FetchMode.SELECT)
+    //用户参加的活动
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user",
+            targetEntity = UserAttendActivityRelation.class)
     @LazyCollection(
             LazyCollectionOption.EXTRA
     )
-    private Set<Activity> attendActivities = new HashSet<>();
+    private List<UserAttendActivityRelation> userAttendActivityRelations = new ArrayList<>();
 
-    @Basic(fetch = FetchType.LAZY)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "likeUsers")
+
+    //用户喜欢的活动
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user",
+            targetEntity = UserLikeActivityRelation.class)
     @LazyCollection(
             LazyCollectionOption.EXTRA
     )
-    private Set<Activity> likeActivities = new HashSet<>();
+    private List<UserLikeActivityRelation> userLikeActivityRelations = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "authorUser", cascade = CascadeType.ALL)
-    private Set<Activity> sponsorActivities = new HashSet<>();
+    //user delete 不影响活动本身
+    @OneToMany(mappedBy = "authorUser")
+    private List<Activity> sponsorActivities = new ArrayList<>();
 
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "followeds")
-    private Set<User> followers = new HashSet<>();//自己关注的人
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "user", targetEntity = UserImage.class)
+    private Set<UserImage> userImages = new HashSet<>();
 
-
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "t_follower_followed",
-            joinColumns = @JoinColumn(name = "follower_id"),
-            inverseJoinColumns = @JoinColumn(name = "followed_id"))
-    @LazyCollection(
-            LazyCollectionOption.EXTRA
-    )
-    private Set<User> followeds = new HashSet<>();//关注自己的人
-
-
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "likeusers")
-    private Set<Post> posts = new HashSet<>();
-
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "user", targetEntity = PersonalImage.class)
-    private Set<PersonalImage> personalImages = new HashSet<>();
-
-
-    public Set<PersonalImage> getPersonalImages() {
-        return personalImages;
-    }
-
-    public void setPersonalImages(Set<PersonalImage> personalImages) {
-        this.personalImages = personalImages;
-    }
-
-    public Set<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
-    }
 
     public User() {
     }
-
 
     public User(String phone, String password, String salt, String token) {
         this.phone = phone;
@@ -129,20 +176,13 @@ public class User {
         this.username = username;
     }
 
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Integer getAge() {
@@ -167,6 +207,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public String getToken() {
@@ -209,6 +257,14 @@ public class User {
         this.enrollment = enrollment;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getGender() {
         return gender;
     }
@@ -228,7 +284,6 @@ public class User {
     public String getBirthday() {
         return birthday;
     }
-
 
     public void setBirthday(String birthday) {
         this.birthday = birthday;
@@ -306,53 +361,107 @@ public class User {
         this.tags = tags;
     }
 
-
-    public Set<Activity> getAttendActivities() {
-        return attendActivities;
+    public List<FollowRelation> getFollowerRelations() {
+        return followerRelations;
     }
 
-    public void setAttendActivities(Set<Activity> attendActivities) {
-        this.attendActivities = attendActivities;
+    public void setFollowerRelations(List<FollowRelation> followerRelations) {
+        this.followerRelations = followerRelations;
     }
 
-    public Set<Activity> getLikeActivities() {
-        return likeActivities;
+    public List<FollowRelation> getFollowedRelations() {
+        return followedRelations;
     }
 
-    public void setLikeActivities(Set<Activity> likeActivities) {
-        this.likeActivities = likeActivities;
+    public void setFollowedRelations(List<FollowRelation> followedRelations) {
+        this.followedRelations = followedRelations;
     }
 
-    public Set<Activity> getSponsorActivities() {
+    public List<UserVisitRelation> getVisterRelations() {
+        return visterRelations;
+    }
+
+    public void setVisterRelations(List<UserVisitRelation> visterRelations) {
+        this.visterRelations = visterRelations;
+    }
+
+    public List<UserVisitRelation> getVisitedRelations() {
+        return visitedRelations;
+    }
+
+    public void setVisitedRelations(List<UserVisitRelation> visitedRelations) {
+        this.visitedRelations = visitedRelations;
+    }
+
+    public List<LikeUserRelation> getLikerRelations() {
+        return likerRelations;
+    }
+
+    public void setLikerRelations(List<LikeUserRelation> likerRelations) {
+        this.likerRelations = likerRelations;
+    }
+
+    public List<LikeUserRelation> getLikedRelations() {
+        return likedRelations;
+    }
+
+    public void setLikedRelations(List<LikeUserRelation> likedRelations) {
+        this.likedRelations = likedRelations;
+    }
+
+    public List<Post> getPublishedPosts() {
+        return publishedPosts;
+    }
+
+    public void setPublishedPosts(List<Post> publishedPosts) {
+        this.publishedPosts = publishedPosts;
+    }
+
+    public List<UserLikePostRelation> getUserLikePostRelations() {
+        return userLikePostRelations;
+    }
+
+    public void setUserLikePostRelations(List<UserLikePostRelation> userLikePostRelations) {
+        this.userLikePostRelations = userLikePostRelations;
+    }
+
+    public AvatarVoice getAvatarVoice() {
+        return avatarVoice;
+    }
+
+    public void setAvatarVoice(AvatarVoice avatarVoice) {
+        this.avatarVoice = avatarVoice;
+    }
+
+    public List<UserAttendActivityRelation> getUserAttendActivityRelations() {
+        return userAttendActivityRelations;
+    }
+
+    public void setUserAttendActivityRelations(List<UserAttendActivityRelation> userAttendActivityRelations) {
+        this.userAttendActivityRelations = userAttendActivityRelations;
+    }
+
+    public List<UserLikeActivityRelation> getUserLikeActivityRelations() {
+        return userLikeActivityRelations;
+    }
+
+    public void setUserLikeActivityRelations(List<UserLikeActivityRelation> userLikeActivityRelations) {
+        this.userLikeActivityRelations = userLikeActivityRelations;
+    }
+
+    public List<Activity> getSponsorActivities() {
         return sponsorActivities;
     }
 
-    public void setSponsorActivities(Set<Activity> sponsorActivities) {
+    public void setSponsorActivities(List<Activity> sponsorActivities) {
         this.sponsorActivities = sponsorActivities;
     }
 
-    public Set<User> getFollowers() {
-        return followers;
+    public Set<UserImage> getUserImages() {
+        return userImages;
     }
 
-    public void setFollowers(Set<User> followers) {
-        this.followers = followers;
-    }
-
-    public Set<User> getFolloweds() {
-        return followeds;
-    }
-
-    public void setFolloweds(Set<User> followeds) {
-        this.followeds = followeds;
-    }
-
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
+    public void setUserImages(Set<UserImage> userImages) {
+        this.userImages = userImages;
     }
 }

@@ -107,10 +107,11 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public ResultInfo getlikeUsers(Long commentId) {
-        Set<User> users = commentDao.findOne(commentId).getLikeUser();
-
-        Set<UserVo> userVos = new HashSet<>();
-        users.forEach(args-> userVos.add(modelMapper.map(args,UserVo.class)));
-        return ResultUtil.createSuccess("点赞用户",userVos);
+//        Set<User> users = commentDao.findOne(commentId).getLikeUser();
+//
+//        Set<UserVo> userVos = new HashSet<>();
+//        users.forEach(args-> userVos.add(modelMapper.map(args,UserVo.class)));
+//        return ResultUtil.createSuccess("点赞用户",userVos);
+        return null;
     }
 }

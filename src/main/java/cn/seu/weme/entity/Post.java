@@ -1,38 +1,54 @@
 package cn.seu.weme.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by LCN on 2016-12-18.
  */
 @Entity
+@Table(name = "t_post")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String title;
-    private String body;
-    private Date timestamp;
 
-    private Integer likenumbers;
-    private Integer commentnumber;
-    private Boolean disable;
+    private String title;
+    @Lob
+    private String body;
+
+    @Column(columnDefinition = "Boolean default false")
+    private Boolean disable = false;
+
     private Integer top;
 
+    @CreationTimestamp
+    private Date timestamp;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "post",
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
+    @JoinColumn(name = "publish_user_id")
+    private User publishUser;
+
+
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "post",
             targetEntity = Comment.class)
-    private Set<Comment> comments = new HashSet<>();
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<Comment> comments = new ArrayList<>();
 
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
-    @JoinTable(name = "t_like_user_post",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> likeusers = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user",
+            targetEntity = UserLikePostRelation.class)
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<UserLikePostRelation> userLikePostRelations = new ArrayList<>();
 
 
     @ManyToOne
@@ -40,15 +56,8 @@ public class Post {
     private Topic topic;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", targetEntity = PostImage.class)
-    private Set<PostImage> postImages = new HashSet<>();
+    private List<PostImage> postImages = new ArrayList<>();
 
-    public Set<PostImage> getPostImages() {
-        return postImages;
-    }
-
-    public void setPostImages(Set<PostImage> postImages) {
-        this.postImages = postImages;
-    }
 
     public Long getId() {
         return id;
@@ -74,31 +83,6 @@ public class Post {
         this.body = body;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-
-    public Integer getLikenumbers() {
-        return likenumbers;
-    }
-
-    public void setLikenumbers(Integer likenumbers) {
-        this.likenumbers = likenumbers;
-    }
-
-    public Integer getCommentnumber() {
-        return commentnumber;
-    }
-
-    public void setCommentnumber(Integer commentnumber) {
-        this.commentnumber = commentnumber;
-    }
-
     public Boolean getDisable() {
         return disable;
     }
@@ -115,20 +99,36 @@ public class Post {
         this.top = top;
     }
 
-    public Set<Comment> getComments() {
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public User getPublishUser() {
+        return publishUser;
+    }
+
+    public void setPublishUser(User publishUser) {
+        this.publishUser = publishUser;
+    }
+
+    public List<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(Set<Comment> comments) {
+    public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
 
-    public Set<User> getLikeusers() {
-        return likeusers;
+    public List<UserLikePostRelation> getUserLikePostRelations() {
+        return userLikePostRelations;
     }
 
-    public void setLikeusers(Set<User> likeusers) {
-        this.likeusers = likeusers;
+    public void setUserLikePostRelations(List<UserLikePostRelation> userLikePostRelations) {
+        this.userLikePostRelations = userLikePostRelations;
     }
 
     public Topic getTopic() {
@@ -137,5 +137,13 @@ public class Post {
 
     public void setTopic(Topic topic) {
         this.topic = topic;
+    }
+
+    public List<PostImage> getPostImages() {
+        return postImages;
+    }
+
+    public void setPostImages(List<PostImage> postImages) {
+        this.postImages = postImages;
     }
 }

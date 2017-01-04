@@ -30,9 +30,7 @@ public interface UserService {
 
     public ResponseInfo attendActivity(String token, Long activityId);
 
-
     public ResponseInfo unAttendActivity(String token, Long activityId);
-
 
     public ResultInfo attendActivity2(Long userId, Long activityId);
 
@@ -88,4 +86,7 @@ public interface UserService {
     public UserVo getProfileById(String token, Long userId);
 
     public UserVo getProfileByIdPhone(String token, Long userId);
+
+    //关注某人
+    public ResponseInfo followUser(String token, Long followedUserId);
 }

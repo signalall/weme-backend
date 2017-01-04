@@ -4,10 +4,7 @@ import cn.seu.weme.common.result.ResponseInfo;
 import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.common.result.ResultUtil;
 import cn.seu.weme.common.utils.*;
-import cn.seu.weme.dao.ActivityDao;
-import cn.seu.weme.dao.CheckMsgDao;
-import cn.seu.weme.dao.PersonImageDao;
-import cn.seu.weme.dao.UserDao;
+import cn.seu.weme.dao.*;
 import cn.seu.weme.dto.*;
 import cn.seu.weme.dto.old.ActivityVo;
 import cn.seu.weme.entity.*;
@@ -39,13 +36,16 @@ public class UserServiceImpl implements UserService {
     private ActivityDao activityDao;
 
     @Autowired
-    private PersonImageDao personImageDao;
+    private UserImageDao userImageDao;
 
     @Autowired
     private CheckMsgDao checkMsgDao;
 
     @Autowired
     private AvatarVoiceDao avatarVoiceDao;
+
+    @Autowired
+    private FollowRelationDao followRelationDao;
 
     @Autowired
     private ModelMapper mapper;
@@ -59,10 +59,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultInfo attendActityV2(Long userId, Long activityId) {
-        User user = userDao.findOne(userId);
-        Activity activity = activityDao.findOne(activityId);
-        activity.getAttendUsers().add(user);
-        activityDao.save(activity);
+//        User user = userDao.findOne(userId);
+//        Activity activity = activityDao.findOne(activityId);
+//        activity.getAttendUsers().add(user);
+//        activityDao.save(activity);
         return ResultUtil.createSuccess("参加活动成功");
     }
 
@@ -108,10 +108,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultInfo likeActity(Long userId, Long activityId) {
-        User user = userDao.findOne(userId);
-        Activity activity = activityDao.findOne(activityId);
-        activity.getLikeUsers().add(user);
-        activityDao.save(activity);
+//        User user = userDao.findOne(userId);
+//        Activity activity = activityDao.findOne(activityId);
+//        activity.getLikeUsers().add(user);
+//        activityDao.save(activity);
         return ResultUtil.createSuccess("喜欢活动成功");
     }
 
@@ -126,27 +126,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultInfo getFollowUsers(Long userId) {
-        Set<User> users = userDao.findOne(userId).getFolloweds();
-        Set<UserVo> userVos = new HashSet<>();
-        users.forEach(args -> userVos.add(mapper.map(args, UserVo.class)));
-        return ResultUtil.createSuccess("关注自己的人", userVos);
+//        Set<User> users = userDao.findOne(userId).getFolloweds();
+//        Set<UserVo> userVos = new HashSet<>();
+//        users.forEach(args -> userVos.add(mapper.map(args, UserVo.class)));
+//        return ResultUtil.createSuccess("关注自己的人", userVos);
+        return null;
     }
 
     @Override
     public ResultInfo getFollowedUsers(Long userId) {
-        Set<User> users = userDao.findOne(userId).getFollowers();
-        Set<UserVo> userVos = new HashSet<>();
-        users.forEach(args -> userVos.add(mapper.map(args, UserVo.class)));
-        return ResultUtil.createSuccess("自己的关注者", userVos);
+//        Set<User> users = userDao.findOne(userId).getFollowers();
+//        Set<UserVo> userVos = new HashSet<>();
+//        users.forEach(args -> userVos.add(mapper.map(args, UserVo.class)));
+//        return ResultUtil.createSuccess("自己的关注者", userVos);
+        return null;
     }
 
     @Override
     public ResultInfo uploadImage(Long userId, PersonImageVo personImageVo) {
         User user = userDao.findOne(userId);
-        PersonalImage personalImage = mapper.map(personImageVo, PersonalImage.class);
-        personalImage.setUser(user);
+        UserImage userImage = mapper.map(personImageVo, UserImage.class);
+        userImage.setUser(user);
 
-        personImageDao.save(personalImage);
+        userImageDao.save(userImage);
         return ResultUtil.createSuccess("保存图片成功");
     }
 
@@ -482,43 +484,43 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map likeActivity(String token, Long activityId) {
-        User user = userDao.findByToken(token);
-        Long userId = user.getId();
+//        User user = userDao.findByToken(token);
+//        Long userId = user.getId();
+//
+//        javax.persistence.Query query = entityManager.createNativeQuery("insert into t_like_user_activity(user_id,activity_id) VALUES(?1,?2)");
+//        query.setParameter(1, userId);
+//        query.setParameter(2, activityId);
+//
+//        query.executeUpdate();
+//
+//        int number = activityDao.findOne(activityId).getLikeUsers().size();
+//
+//        Map<String, Object> result = new HashMap<>();
+//        result.put("state", "successful");
+//        result.put("reason", "");
+//        result.put("likenumber", number);
 
-        javax.persistence.Query query = entityManager.createNativeQuery("insert into t_like_user_activity(user_id,activity_id) VALUES(?1,?2)");
-        query.setParameter(1, userId);
-        query.setParameter(2, activityId);
 
-        query.executeUpdate();
-
-        int number = activityDao.findOne(activityId).getLikeUsers().size();
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("state", "successful");
-        result.put("reason", "");
-        result.put("likenumber", number);
-
-
-        return result;
+        return null;
     }
 
     @Override
     public Map unLikeActivity(String token, Long activityId) {
-        User user = userDao.findByToken(token);
-        Long userId = user.getId();
+//        User user = userDao.findByToken(token);
+//        Long userId = user.getId();
+//
+//        javax.persistence.Query query = entityManager.createNativeQuery("DELETE FROM t_like_user_activity WHERE user_id = ?1 and activity_id =?2 ");
+//        query.setParameter(1, userId);
+//        query.setParameter(2, activityId);
+//        query.executeUpdate();
+//
+//        int number = activityDao.findOne(activityId).getLikeUsers().size();
+//        Map<String, Object> result = new HashMap<>();
+//        result.put("state", "successful");
+//        result.put("reason", "");
+//        result.put("likenumber", number);
 
-        javax.persistence.Query query = entityManager.createNativeQuery("DELETE FROM t_like_user_activity WHERE user_id = ?1 and activity_id =?2 ");
-        query.setParameter(1, userId);
-        query.setParameter(2, activityId);
-        query.executeUpdate();
-
-        int number = activityDao.findOne(activityId).getLikeUsers().size();
-        Map<String, Object> result = new HashMap<>();
-        result.put("state", "successful");
-        result.put("reason", "");
-        result.put("likenumber", number);
-
-        return result;
+        return null;
     }
 
 
@@ -591,22 +593,22 @@ public class UserServiceImpl implements UserService {
     public Map getPersonImages(String token, Long imageId) {
         User user = userDao.findByToken(token);
         Long userId = user.getId();
-        List<PersonalImage> personalImages = new ArrayList<>();
+        List<UserImage> userImages = new ArrayList<>();
         if (imageId == 0L) {
-//            personalImages = personImageDao.getPersonalImages(userId);
+//            userImages = userImageDao.getPersonalImages(userId);
         } else {
-            personalImages = personImageDao.getPersonalImages2(userId, imageId);
+            userImages = userImageDao.getPersonalImages2(userId, imageId);
         }
 
         List<Map> result = new ArrayList<>();
-        for (PersonalImage personalImage : personalImages) {
+        for (UserImage userImage : userImages) {
             Map<String, Object> data = new HashMap<>();
             data.put("userid", userId);
-            data.put("id", personalImage.getId());
-            data.put("timestamp", personalImage.getTimestamp());
+            data.put("id", userImage.getId());
+            data.put("timestamp", userImage.getTimestamp());
             data.put("username", user.getName());
-            data.put("thumbnail", personalImage.getThumbnailUrl());
-            data.put("image", personalImage.getUrl());
+            data.put("thumbnail", userImage.getThumbnailUrl());
+            data.put("image", userImage.getUrl());
             result.add(data);
         }
 
@@ -634,6 +636,17 @@ public class UserServiceImpl implements UserService {
     public UserVo getProfileByIdPhone(String token, Long userId) {
         // TODO: 2017-1-3
         return null;
+    }
+
+    @Override
+    public ResponseInfo followUser(String token, Long followedUserId) {
+        User follower = userDao.findByToken(token);
+        User followed = userDao.findOne(followedUserId);
+        FollowRelation followRelation = new FollowRelation(follower, followed);
+        followRelationDao.save(followRelation);
+
+        ResponseInfo responseInfo = new ResponseInfo();
+        return responseInfo;
     }
 
 }

@@ -1,29 +1,33 @@
 package cn.seu.weme.entity;
 
+import org.hibernate.annotations.*;
+
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
  * Created by LCN on 2017-1-2.
  */
 @Entity
+@Table(name = "t_check_msg")
 public class CheckMsg {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(length = 32)
     private String phone;
 
+    @Column(length = 32)
     private String code;
 
+    @CreationTimestamp
     private Date timeStamp;
 
     public CheckMsg() {
-
     }
 
     public CheckMsg(String phone, String code) {

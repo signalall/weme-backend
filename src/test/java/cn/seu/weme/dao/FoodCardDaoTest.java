@@ -45,6 +45,6 @@ public class FoodCardDaoTest extends BaseTest {
     @Test
     public void testGetLikeUser() {
         FoodCard foodCard = foodCardDao.findOne(2L);
-        foodCard.getLikeFoodCard();
+        foodCard.getLikeFoodCards();
     }
 }

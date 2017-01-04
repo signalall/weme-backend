@@ -1,31 +1,34 @@
 package cn.seu.weme.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by LCN on 2017-1-3.
+ * Created by LCN on 2017-1-4.
  */
 @Entity
-@Table(name = "t_like_user_foodcard",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "foodcard_id"}))
-public class LikeFoodCard {
+@Table(name = "t_user_like_activity_relation",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "activity_id"}))
+public class UserLikeActivityRelation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "user_id")
     private User user;
 
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = FoodCard.class)
-    @JoinColumn(name = "foodcard_id")
-    private FoodCard foodCard;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Activity.class)
+    @JoinColumn(name = "activity_id")
+    private Activity activity;
 
 
-    @Column
-    @org.hibernate.annotations.CreationTimestamp
+    @CreationTimestamp
     private Date timestamp;
 
     public Long getId() {
@@ -44,12 +47,12 @@ public class LikeFoodCard {
         this.user = user;
     }
 
-    public FoodCard getFoodCard() {
-        return foodCard;
+    public Activity getActivity() {
+        return activity;
     }
 
-    public void setFoodCard(FoodCard foodCard) {
-        this.foodCard = foodCard;
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 
     public Date getTimestamp() {

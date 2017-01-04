@@ -1,63 +1,55 @@
 package cn.seu.weme.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import org.jboss.logging.annotations.Pos;
+
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by LCN on 2016-12-18.
  */
 @Entity
+@Table(name="t_comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Lob
     private String content;
 
+    @CreationTimestamp
+    private Date timestamp;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Post.class)
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY, targetEntity = User.class)
-    @JoinTable(
-            name = "like_user_comment",
-            joinColumns = @JoinColumn(name = "comment_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> likeUser = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "comment",targetEntity = CommentImage.class)
-    private Set<CommentImage> commentImages = new HashSet<>();
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<CommentImage> commentImages = new ArrayList<>();
 
 
-    public Set<CommentImage> getCommentImages() {
-        return commentImages;
-    }
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = UserLikeCommentRelation.class, mappedBy = "comment",
+            fetch = FetchType.LAZY)
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<UserLikeCommentRelation> userLikeCommentRelations = new ArrayList<>();
 
-    public void setCommentImages(Set<CommentImage> commentImages) {
-        this.commentImages = commentImages;
-    }
-
-    public Set<User> getLikeUser() {
-        return likeUser;
-    }
-
-    public void setLikeUser(Set<User> likeUser) {
-        this.likeUser = likeUser;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getContent() {
@@ -68,7 +60,35 @@ public class Comment {
         this.content = content;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public List<CommentImage> getCommentImages() {
+        return commentImages;
+    }
+
+    public void setCommentImages(List<CommentImage> commentImages) {
+        this.commentImages = commentImages;
+    }
+
+    public List<UserLikeCommentRelation> getUserLikeCommentRelations() {
+        return userLikeCommentRelations;
+    }
+
+    public void setUserLikeCommentRelations(List<UserLikeCommentRelation> userLikeCommentRelations) {
+        this.userLikeCommentRelations = userLikeCommentRelations;
     }
 }

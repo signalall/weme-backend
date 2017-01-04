@@ -1,11 +1,14 @@
 package cn.seu.weme.common.filter;
 
+import com.google.common.base.Strings;
+import net.sf.json.JSONObject;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,14 +20,31 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
-        //校验用户身份是否合法
-        HttpSession session = request.getSession();
+        String token = "";
 
-        //用户访问的url
-        String url = request.getRequestURI();
+
+        if ("POST".equalsIgnoreCase(request.getMethod())) {
+            try {
+                InputStream is = null;
+                String contentStr = "";
+                is = request.getInputStream();
+                contentStr = IOUtils.toString(is, "utf-8");
+                JSONObject jsonObject = JSONObject.fromObject(contentStr);
+                token = jsonObject.getString("token");
+            } catch (Exception e) {
+                return false;
+            }
+
+        }
+
+        if (Strings.isNullOrEmpty(token)) {
+            return true;
+        }
 
         if (true)
             return true;
+
+        String url = request.getRequestURL().toString();
 
         //校验用户访问是否是公开资源 地址
         List<String> open_urls = new ArrayList<String>();

@@ -1,5 +1,7 @@
 package cn.seu.weme.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -7,6 +9,7 @@ import java.util.Date;
  * Created by LCN on 2016-12-21.
  */
 @Entity
+@Table(name = "t_message")
 public class Message {
 
     @Id
@@ -23,9 +26,13 @@ public class Message {
 
     private String text;//不支持图片类型
 
-    private Boolean state;
 
-    private Date sendTime;
+    @Column(columnDefinition = "Boolean default false")
+    private boolean state = false;
+
+
+    @CreationTimestamp
+    private Date timestamp;
 
 
     public Long getId() {
@@ -68,11 +75,13 @@ public class Message {
         this.state = state;
     }
 
-    public Date getSendTime() {
-        return sendTime;
+
+
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public void setSendTime(Date sendTime) {
-        this.sendTime = sendTime;
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

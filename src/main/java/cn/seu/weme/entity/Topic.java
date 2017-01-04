@@ -1,13 +1,17 @@
 package cn.seu.weme.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by LCN on 2016-12-18.
  */
 @Entity
+@Table(name = "t_topic")
 public class Topic {
 
     @Id
@@ -24,14 +28,16 @@ public class Topic {
 
     private Integer rank;
 
-    private Integer postnumber;
-
     private String imageUrl;
 
+    @CreationTimestamp
+    private Date timestamp;
 
-
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private Set<Post> posts = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "topic")
+    @LazyCollection(
+            LazyCollectionOption.EXTRA
+    )
+    private List<Post> posts = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -41,14 +47,13 @@ public class Topic {
         this.id = id;
     }
 
-    public Set<Post> getPosts() {
+    public List<Post> getPosts() {
         return posts;
     }
 
-    public void setPosts(Set<Post> posts) {
+    public void setPosts(List<Post> posts) {
         this.posts = posts;
     }
-
 
     public String getTheme() {
         return theme;
@@ -90,19 +95,19 @@ public class Topic {
         this.rank = rank;
     }
 
-    public Integer getPostnumber() {
-        return postnumber;
-    }
-
-    public void setPostnumber(Integer postnumber) {
-        this.postnumber = postnumber;
-    }
-
     public String getImageUrl() {
         return imageUrl;
     }
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }
