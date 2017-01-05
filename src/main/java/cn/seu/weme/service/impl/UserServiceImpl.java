@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserService {
             return ResultUtil.createFail(messageSourceHelper.getMessage("102"));
         }
 
-        if (Minutes.minutesBetween(new DateTime(), new DateTime(checkMsg.getTimeStamp())).getMinutes() > 5) {
+        if (Minutes.minutesBetween(new DateTime(), new DateTime(checkMsg.getTimestamp())).getMinutes() > 5) {
             return ResultUtil.createFail("验证码超时!");
         }
 
@@ -236,7 +236,7 @@ public class UserServiceImpl implements UserService {
             return ResultUtil.createFail("验证码错误!");
         }
 
-        if (Minutes.minutesBetween(new DateTime(), new DateTime(checkMsg.getTimeStamp())).getMinutes() > 5) {
+        if (Minutes.minutesBetween(new DateTime(), new DateTime(checkMsg.getTimestamp())).getMinutes() > 5) {
             return ResultUtil.createFail("验证码超时!");
         }
 
@@ -347,7 +347,7 @@ public class UserServiceImpl implements UserService {
             checkMsg = new CheckMsg(phone, code);
         } else {
             checkMsg.setCode(code);
-            checkMsg.setTimeStamp(new Date());
+            checkMsg.setTimestamp(new Date());
         }
         checkMsgDao.save(checkMsg);
         responseInfo.setState("successful");
@@ -561,7 +561,7 @@ public class UserServiceImpl implements UserService {
             return false;
         }
 
-        if (Minutes.minutesBetween(new DateTime(checkMsg.getTimeStamp()), new DateTime()).getMinutes() > 5) {
+        if (Minutes.minutesBetween(new DateTime(checkMsg.getTimestamp()), new DateTime()).getMinutes() > 5) {
             return false;
         }
         return true;

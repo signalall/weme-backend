@@ -44,6 +44,7 @@ public interface UserService {
 
     public ResultInfo uploadImage(Long userId, PersonImageVo personImageVo);
 
+
     //注册用户
     public ResultInfo registerV2(String phone, String code, String password);
 

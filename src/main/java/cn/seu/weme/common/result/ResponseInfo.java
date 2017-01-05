@@ -1,6 +1,7 @@
 package cn.seu.weme.common.result;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.swagger.models.auth.In;
 
 /**
  * Created by LCN on 2017-1-3.
@@ -15,6 +16,16 @@ public class ResponseInfo {
 
     private Object result;
     private String pages;
+
+    private Integer likenumber;
+
+    public Integer getLikenumber() {
+        return likenumber;
+    }
+
+    public void setLikenumber(Integer likenumber) {
+        this.likenumber = likenumber;
+    }
 
     public String getGender() {
         return gender;
