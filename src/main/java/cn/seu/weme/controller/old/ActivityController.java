@@ -18,7 +18,7 @@ import java.util.Map;
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/activity_route")
+//@RequestMapping(value = "/activity_route")
 public class ActivityController {
 
     @Autowired

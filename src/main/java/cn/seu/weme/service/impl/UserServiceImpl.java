@@ -326,16 +326,13 @@ public class UserServiceImpl implements UserService {
     public ResponseInfo sendSmsCode(String phone, int type) {
         ResponseInfo responseInfo = new ResponseInfo();
         boolean success = false;
-
-        if (userDao.findByPhone(phone) == null) {
+        if (userDao.findByPhone(phone) != null) {
             responseInfo.setState("fail");
-            responseInfo.setReason("invalid");
+            responseInfo.setReason("该手机号已经注册");
             return responseInfo;
         }
-
         String code = RandUtils.getRandomString(6);
         success = SmsUtils.sendSmsCodeByType(phone, code, type);
-
         if (!success) {
             responseInfo.setState("fail");
             responseInfo.setReason("验证码发送失败");
@@ -379,7 +376,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return ResultUtil.createFail("没有此用户");
         }
-        BeanUtils.copyProperties(userVo, user);
+        MyBeanUtils.copyProperties(userVo, user);
         userDao.save(user);
         return ResultUtil.createSuccess("更新用户成功");
     }
@@ -389,11 +386,6 @@ public class UserServiceImpl implements UserService {
     public ResponseInfo updateUser(UserVo userVo) {
         ResponseInfo responseInfo = new ResponseInfo();
         User user = userDao.findByToken(userVo.getToken());
-        if (user == null) {
-            responseInfo.setState("fail");
-            responseInfo.setReason("invalid access");
-            return responseInfo;
-        }
 
         if (user.getCertification()) {
             if (!Objects.equals(user.getSchool(), userVo.getSchool()) ||
@@ -404,7 +396,7 @@ public class UserServiceImpl implements UserService {
                 return responseInfo;
             }
         }
-        BeanUtils.copyProperties(userVo, user);
+        MyBeanUtils.copyProperties(userVo, user);
         userDao.save(user);
         responseInfo.setState("successful");
         responseInfo.setReason("");
@@ -414,7 +406,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseInfo editSchoolInfo(SchoolInfoVo schoolInfoVo) {
         User user = userDao.findByToken(schoolInfoVo.getToken());
-        BeanUtils.copyProperties(schoolInfoVo, user);
+        MyBeanUtils.copyProperties(schoolInfoVo, user);
         userDao.save(user);
 
         ResponseInfo responseInfo = new ResponseInfo();
@@ -426,7 +418,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseInfo editPersonInfo(UserInfoVo userInfoVo) {
         User user = userDao.findByToken(userInfoVo.getToken());
-        BeanUtils.copyProperties(userInfoVo, user);
+        MyBeanUtils.copyProperties(userInfoVo, user);
         userDao.save(user);
 
         ResponseInfo responseInfo = new ResponseInfo();
@@ -452,6 +444,7 @@ public class UserServiceImpl implements UserService {
     public ResponseInfo editCardSetting(String token, String cardflag) {
         ResponseInfo responseInfo = new ResponseInfo();
         User user = userDao.findByToken(token);
+
         AvatarVoice avatarVoice = user.getAvatarVoice();
 
         if (avatarVoice == null) {
@@ -630,22 +623,136 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserVo getProfile(String token) {
+    public Map getProfile(String token) {
         User user = userDao.findByToken(token);
-        UserVo userVo = mapper.map(user, UserVo.class);
-        return userVo;
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("username", user.getUsername());
+        result.put("state", "successful");
+        result.put("reason", "");
+        result.put("school", user.getSchool());
+        result.put("degree", user.getDegree());
+        result.put("department", user.getDepartment());
+        result.put("enrollment", user.getEnrollment());
+        result.put("name", user.getName());
+        result.put("gender", user.getGender());
+        result.put("birthday", user.getBirthday());
+        result.put("preference", user.getPreference());
+        result.put("hobby", user.getHobby());
+        result.put("phone", user.getPhone());
+
+        result.put("wechat", user.getWechat());
+        result.put("qq", user.getQq());
+        result.put("hometown", user.getHometown());
+
+        result.put("lookcount", user.getLookCount());
+        result.put("weme", user.getWeme());
+        result.put("id", user.getId());
+
+        return result;
     }
 
     @Override
-    public UserVo getProfileById(String token, Long userId) {
-        //todo 用户之间关系
-        return null;
+    public Map getProfileById(String token, Long userId) {
+        User me = userDao.findByToken(token);
+        User user = userDao.findOne(userId);
+        if (user == null) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("state", "fail");
+            result.put("reason", "用户不存在");
+            return result;
+        }
+
+        String followFlag = "4";
+        if (followRelationDao.findByFollowerAndFollowed(me.getId(), userId) == null) {
+            if (followRelationDao.findByFollowerAndFollowed(userId, me.getId()) == null) {
+                followFlag = "2";
+            } else {
+                followFlag = "0";
+            }
+        } else {
+            if (followRelationDao.findByFollowerAndFollowed(userId, me.getId()) == null) {
+                followFlag = "1";
+            } else {
+                followFlag = "3";
+            }
+        }
+
+        String birthFlag = "0";
+        // TODO: 2017-1-5 星座
+
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("username", user.getUsername());
+        result.put("state", "successful");
+        result.put("reason", "");
+        result.put("school", user.getSchool());
+        result.put("degree", user.getDegree());
+        result.put("department", user.getDepartment());
+        result.put("enrollment", user.getEnrollment());
+        result.put("name", user.getName());
+        result.put("gender", user.getGender());
+        result.put("birthday", user.getBirthday());
+        result.put("preference", user.getPreference());
+        result.put("hobby", user.getHobby());
+        result.put("phone", user.getPhone());
+
+        result.put("wechat", user.getWechat());
+        result.put("qq", user.getQq());
+        result.put("hometown", user.getHometown());
+
+        result.put("lookcount", user.getLookCount());
+        result.put("weme", user.getWeme());
+        result.put("id", user.getId());
+        result.put("followflag", followFlag);
+        result.put("birthflag", birthFlag);
+        result.put("certification", user.getCertification());
+        result.put("constellation", "");
+        result.put("voice", "");
+
+        return result;
     }
 
     @Override
-    public UserVo getProfileByIdPhone(String token, Long userId) {
-        // TODO: 2017-1-3
-        return null;
+    public Map getProfileByIdPhone(String token, Long userId) {
+
+        User user = userDao.findOne(userId);
+        if (user == null) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("state", "fail");
+            result.put("reason", "用户不存在");
+            return result;
+        }
+
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("username", user.getUsername());
+        result.put("state", "successful");
+        result.put("reason", "");
+        result.put("school", user.getSchool());
+        result.put("degree", user.getDegree());
+        result.put("department", user.getDepartment());
+        result.put("enrollment", user.getEnrollment());
+        result.put("name", user.getName());
+        result.put("gender", user.getGender());
+        result.put("birthday", user.getBirthday());
+        result.put("preference", user.getPreference());
+        result.put("hobby", user.getHobby());
+        result.put("phone", user.getPhone());
+
+        result.put("wechat", user.getWechat());
+        result.put("qq", user.getQq());
+        result.put("hometown", user.getHometown());
+
+        result.put("lookcount", user.getLookCount());
+        result.put("weme", user.getWeme());
+        result.put("id", user.getId());
+
+        result.put("certification", user.getCertification());
+        result.put("constellation", "");
+        result.put("voice", "");
+
+        return result;
     }
 
     @Override

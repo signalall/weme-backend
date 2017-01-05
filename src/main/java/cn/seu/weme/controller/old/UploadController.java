@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/upload_image")
+//@RequestMapping(value = "/upload_image")
 public class UploadController {
 
     @RequestMapping(value = "/uploadavatar", method = RequestMethod.POST)

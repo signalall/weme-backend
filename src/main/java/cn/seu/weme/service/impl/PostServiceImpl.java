@@ -2,6 +2,7 @@ package cn.seu.weme.service.impl;
 
 import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.common.result.ResultUtil;
+import cn.seu.weme.common.utils.MyBeanUtils;
 import cn.seu.weme.dao.PostDao;
 import cn.seu.weme.dto.PostVo;
 import cn.seu.weme.entity.Post;
@@ -42,7 +43,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public ResultInfo updatePost(PostVo postVo) {
         Post post = postDao.findOne(postVo.getId());
-        BeanUtils.copyProperties(postVo,post);
+        MyBeanUtils.copyProperties(postVo,post);
 
         postDao.save(post);
         return ResultUtil.createSuccess("更新文章成功");

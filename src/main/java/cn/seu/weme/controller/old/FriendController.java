@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/friends_route")
+//@RequestMapping(value = "/friends_route")
 public class FriendController {
 
     @Autowired

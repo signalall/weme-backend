@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/card_route")
+//@RequestMapping(value = "/card_route")
 public class CardController {
 
     @RequestMapping(value = "/publishcard", method = RequestMethod.POST)

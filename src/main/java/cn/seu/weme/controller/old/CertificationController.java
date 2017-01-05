@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/certification_route")
+//@RequestMapping(value = "/certification_route")
 public class CertificationController {
 
     @RequestMapping(value = "/publishcertification", method = RequestMethod.POST)

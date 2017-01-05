@@ -1,7 +1,6 @@
 package cn.seu.weme.common.result;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.swagger.models.auth.In;
 
 /**
  * Created by LCN on 2017-1-3.

@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/community_route")
+//@RequestMapping(value = "/community_route")
 public class CommunityController {
 
     @RequestMapping(value = "/deletepost", method = RequestMethod.POST)

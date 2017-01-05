@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/personalmessage_route")
+//@RequestMapping(value = "/personalmessage_route")
 public class MessageController {
 
     @RequestMapping(value = "/unreadmessagenum", method = RequestMethod.POST)

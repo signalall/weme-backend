@@ -3,6 +3,7 @@ package cn.seu.weme.service.impl;
 import cn.seu.weme.common.result.ResponseInfo;
 import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.common.result.ResultUtil;
+import cn.seu.weme.common.utils.MyBeanUtils;
 import cn.seu.weme.dao.*;
 import cn.seu.weme.dto.old.ActivityVo;
 import cn.seu.weme.entity.*;
@@ -65,7 +66,7 @@ public class ActivityServiceImpl implements ActivityService {
         if (activity == null) {
             return ResultUtil.createFail("没有该活动");
         }
-        BeanUtils.copyProperties(activityVo, activity);
+        MyBeanUtils.copyProperties(activityVo, activity);
         activityDao.save(activity);
         return ResultUtil.createSuccess("更新活动成功");
     }

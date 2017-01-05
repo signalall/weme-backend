@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/check_page")
+//@RequestMapping(value = "/check_page")
 public class UserController {
     @Autowired
     private UserService userService;
