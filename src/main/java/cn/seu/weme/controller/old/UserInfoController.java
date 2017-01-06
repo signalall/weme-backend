@@ -61,7 +61,7 @@ public class UserInfoController {
     public Map getProfileById(@RequestBody JSONObject jsonObject) {
 
         String token = jsonObject.getString("token");
-        Long userId = jsonObject.getLong("userId");
+        Long userId = jsonObject.getLong("id");
 
 
         if (token == null || !checkUserService.validateUser(token)) {

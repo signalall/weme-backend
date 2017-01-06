@@ -396,6 +396,7 @@ public class UserServiceImpl implements UserService {
                 return responseInfo;
             }
         }
+
         MyBeanUtils.copyProperties(userVo, user);
         userDao.save(user);
         responseInfo.setState("successful");
