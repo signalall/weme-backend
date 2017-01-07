@@ -1,5 +1,6 @@
 package cn.seu.weme.common.utils;
 
+import org.apache.commons.io.FileUtils;
 import org.aspectj.util.FileUtil;
 
 import java.io.File;
@@ -35,12 +36,18 @@ public class MyFileUtils {
 
     public static void copyFileUsingApacheCommonsIO(String source, String dest)
             throws IOException {
-
         File sourceFile = null;
         File destFile = null;
         sourceFile = new File(source);
         destFile = new File(dest);
-        FileUtil.copyFile(sourceFile, destFile);
+        FileUtils.copyFile(sourceFile, destFile);
+    }
 
+    public static void moveFile(String source, String dest) throws IOException {
+        File sourceFile = null;
+        File destFile = null;
+        sourceFile = new File(source);
+        destFile = new File(dest);
+        FileUtils.moveFile(sourceFile, destFile);
     }
 }

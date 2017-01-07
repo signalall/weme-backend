@@ -9,9 +9,21 @@ public class PostVo {
 
     private String title;
     private String body;
+    private Long topicId;
+
 
     private Integer likenumbers;
     private Integer commentnumber;
+
+
+
+    public Long getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(Long topicId) {
+        this.topicId = topicId;
+    }
 
     public Long getId() {
         return id;
