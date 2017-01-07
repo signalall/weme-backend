@@ -47,6 +47,10 @@ public class Comment {
     @Column(nullable = false)
     private int type = 0; //评论的类型  1:to post   2: to activity 3:to comment
 
+    private boolean hasImage = false;
+
+
+
     public User getToUser() {
         return toUser;
     }
@@ -163,5 +167,14 @@ public class Comment {
 
     public void setActivity(Activity activity) {
         this.activity = activity;
+    }
+
+
+    public boolean isHasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
 }

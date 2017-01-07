@@ -58,6 +58,10 @@ public class User {
     @CreationTimestamp
     private Date timestamp;
 
+
+    private Date latestLoginTime;
+
+
     @Lob
     private String tags;
 
@@ -478,5 +482,13 @@ public class User {
 
     public void setUserImages(Set<UserImage> userImages) {
         this.userImages = userImages;
+    }
+
+    public Date getLatestLoginTime() {
+        return latestLoginTime;
+    }
+
+    public void setLatestLoginTime(Date latestLoginTime) {
+        this.latestLoginTime = latestLoginTime;
     }
 }

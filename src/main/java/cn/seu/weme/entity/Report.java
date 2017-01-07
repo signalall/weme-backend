@@ -15,6 +15,18 @@ public class Report {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Comment.class)
+    @JoinColumn(name = "authoruser_id")
+    private User authorUser;
+
+    private String body;
+
+    private int type = 0; //1: user 2:post 3:activity
+
+    @JoinColumn(name = "be_report_id")
+    private Long beReportedId;
+
+
     @CreationTimestamp
     private Date timestamp;
 
@@ -32,5 +44,38 @@ public class Report {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+
+    public User getAuthorUser() {
+        return authorUser;
+    }
+
+    public void setAuthorUser(User authorUser) {
+        this.authorUser = authorUser;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public Long getBeReportedId() {
+        return beReportedId;
+    }
+
+    public void setBeReportedId(Long beReportedId) {
+        this.beReportedId = beReportedId;
     }
 }
