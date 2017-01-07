@@ -16,7 +16,11 @@ public class ResponseInfo {
     private Object result;
     private String pages;
 
+    private int number;
+
     private Integer likenumber;
+
+    private Object data;
 
     public Integer getLikenumber() {
         return likenumber;
@@ -88,5 +92,21 @@ public class ResponseInfo {
 
     public void setPages(String pages) {
         this.pages = pages;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
     }
 }

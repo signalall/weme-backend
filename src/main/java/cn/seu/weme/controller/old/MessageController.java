@@ -1,6 +1,10 @@
 package cn.seu.weme.controller.old;
 
+import cn.seu.weme.common.result.ResponseInfo;
+import cn.seu.weme.service.CheckUserService;
+import cn.seu.weme.service.MessageService;
 import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,55 +19,97 @@ import java.util.Map;
 //@RequestMapping(value = "/personalmessage_route")
 public class MessageController {
 
-    @RequestMapping(value = "/unreadmessagenum", method = RequestMethod.POST)
-    public Map unReadMessageNum(@RequestBody String token) {
 
-        return null;
+    @Autowired
+    private CheckUserService checkUserService;
+    @Autowired
+    private MessageService messageService;
+
+
+    @RequestMapping(value = "/unreadmessagenum", method = RequestMethod.POST)
+    public ResponseInfo unReadMessageNum(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return checkUserService.failResponse();
+        }
+
+        return messageService.getUnReadMessageNum(token);
     }
 
 
     @RequestMapping(value = "/readcommunitynotification", method = RequestMethod.POST)
-    public Map readCommunityNotification(@RequestBody JSONObject jsonObject) {
+    public ResponseInfo readCommunityNotification(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return checkUserService.failResponse();
+        }
 
-        return null;
+        Long commentId = jsonObject.getLong("commentid");
+        return messageService.readComment(token, commentId);
     }
 
 
     @RequestMapping(value = "/systemnotification", method = RequestMethod.POST)
-    public Map systemNotification(@RequestBody String token) {
-
+    public ResponseInfo systemNotification(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return checkUserService.failResponse();
+        }
         return null;
     }
 
 
     @RequestMapping(value = "/sendmessage", method = RequestMethod.POST)
-    private Map sendMessage(@RequestBody JSONObject jsonObject) {
-
-        return null;
+    private ResponseInfo sendMessage(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return checkUserService.failResponse();
+        }
+        String text = jsonObject.getString("text");
+        Long toUserId = jsonObject.getLong("RecId");
+        return messageService.sendMessage(token, toUserId, text);
     }
 
 
     @RequestMapping(value = "/readmessage", method = RequestMethod.POST)
-    public Map readMessage(@RequestBody JSONObject jsonObject) {
-
-        return null;
+    public ResponseInfo readMessage(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return checkUserService.failResponse();
+        }
+        Long messageId = jsonObject.getLong("id");
+        return messageService.readMessage(token, messageId);
     }
 
 
     @RequestMapping(value = "/getSendUserList", method = RequestMethod.POST)
-    public Map getSendUserList() {
-
-        return null;
+    public ResponseInfo getSendUserList(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return checkUserService.failResponse();
+        }
+        return messageService.getSendUserList(token);
     }
 
     @RequestMapping(value = "/getMessageDetailList", method = RequestMethod.POST)
-    public Map getMessageDetailList() {
-        return null;
+    public ResponseInfo getMessageDetailList(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return checkUserService.failResponse();
+        }
+
+        Long sendId = jsonObject.getLong("SendId");
+        int page = jsonObject.getInt("page");
+        return messageService.getMessageDetailList(token, sendId, page);
     }
 
     @RequestMapping(value = "/getmessageunreadnumber", method = RequestMethod.POST)
-    public Map getMessageUnReadNumber() {
-        return null;
+    public ResponseInfo getMessageUnReadNumber(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return checkUserService.failResponse();
+        }
+        return messageService.getUnReadMessageNum(token);
     }
 
 
