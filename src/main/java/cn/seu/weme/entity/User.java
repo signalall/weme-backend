@@ -58,9 +58,30 @@ public class User {
     @CreationTimestamp
     private Date timestamp;
 
+
+    private Date latestLoginTime;
+
+
     @Lob
     private String tags;
 
+    private int lookCount = 0;
+
+    public boolean isCertification() {
+        return certification;
+    }
+
+    public void setCertification(boolean certification) {
+        this.certification = certification;
+    }
+
+    public int getLookCount() {
+        return lookCount;
+    }
+
+    public void setLookCount(int lookCount) {
+        this.lookCount = lookCount;
+    }
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = FollowRelation.class, mappedBy = "follower",
             fetch = FetchType.LAZY)
@@ -461,5 +482,13 @@ public class User {
 
     public void setUserImages(Set<UserImage> userImages) {
         this.userImages = userImages;
+    }
+
+    public Date getLatestLoginTime() {
+        return latestLoginTime;
+    }
+
+    public void setLatestLoginTime(Date latestLoginTime) {
+        this.latestLoginTime = latestLoginTime;
     }
 }

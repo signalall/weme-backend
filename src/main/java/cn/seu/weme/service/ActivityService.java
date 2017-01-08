@@ -3,7 +3,9 @@ package cn.seu.weme.service;
 import cn.seu.weme.common.result.ResponseInfo;
 import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.dto.old.ActivityVo;
+import springfox.documentation.service.ApiListing;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,4 +46,20 @@ public interface ActivityService {
     public ResponseInfo validateActivityUser(String token, Long activityId, Long userId);
 
     public ResponseInfo getActivityAttendUsers(String token, Long activityId, int page);
+
+
+    public ResponseInfo setPassUser(String token, Long activityId, List<Long> userIds);
+
+
+    public ResponseInfo deletePassUser(String token, Long activityId, List<Long> userIds);
+
+
+    public ResponseInfo commentToActivity(String token, Long activityId, String body);
+
+    public ResponseInfo commentToActivityComent(String token, Long commentId, String body);
+
+
+    public ResponseInfo likeAcivityComment(String token, Long commentId);
+
+
 }

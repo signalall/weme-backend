@@ -44,6 +44,7 @@ public interface UserService {
 
     public ResultInfo uploadImage(Long userId, PersonImageVo personImageVo);
 
+
     //注册用户
     public ResultInfo registerV2(String phone, String code, String password);
 
@@ -81,11 +82,11 @@ public interface UserService {
 
     public Map getPersonImages(String token, Long imageId);
 
-    public UserVo getProfile(String token);
+    public Map getProfile(String token);
 
-    public UserVo getProfileById(String token, Long userId);
+    public Map getProfileById(String token, Long userId);
 
-    public UserVo getProfileByIdPhone(String token, Long userId);
+    public Map getProfileByIdPhone(String token, Long userId);
 
     //关注某人
     public ResponseInfo followUser(String token, Long followedUserId);

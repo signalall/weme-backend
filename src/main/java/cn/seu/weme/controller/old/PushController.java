@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/push")
+//@RequestMapping(value = "/push")
 public class PushController {
 
     @RequestMapping(value = "/uploadiosdevicetoken", method = RequestMethod.POST)

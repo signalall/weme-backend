@@ -2,6 +2,7 @@ package cn.seu.weme.service.impl;
 
 import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.common.result.ResultUtil;
+import cn.seu.weme.common.utils.MyBeanUtils;
 import cn.seu.weme.dao.CommentDao;
 import cn.seu.weme.dao.PostDao;
 import cn.seu.weme.dao.UserDao;
@@ -66,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public ResultInfo updateOne(CommentVo data) {
         Comment comment = commentDao.findOne(data.getId());
-        BeanUtils.copyProperties(data, comment);
+        MyBeanUtils.copyProperties(data, comment);
         commentDao.save(comment);
         return ResultUtil.createSuccess("更新评论成功");
     }

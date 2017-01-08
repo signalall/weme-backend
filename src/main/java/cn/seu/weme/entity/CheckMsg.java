@@ -25,7 +25,7 @@ public class CheckMsg {
     private String code;
 
     @CreationTimestamp
-    private Date timeStamp;
+    private Date timestamp;
 
     public CheckMsg() {
     }
@@ -33,7 +33,7 @@ public class CheckMsg {
     public CheckMsg(String phone, String code) {
         this.phone = phone;
         this.code = code;
-        this.timeStamp = new Date();
+        this.timestamp = new Date();
     }
 
     public Long getId() {
@@ -60,11 +60,11 @@ public class CheckMsg {
         this.code = code;
     }
 
-    public Date getTimeStamp() {
-        return timeStamp;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public void setTimeStamp(Date timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

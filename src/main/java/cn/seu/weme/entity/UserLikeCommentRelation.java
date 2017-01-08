@@ -29,6 +29,15 @@ public class UserLikeCommentRelation {
     @CreationTimestamp
     private Date timestamp;
 
+
+    public UserLikeCommentRelation() {
+    }
+
+    public UserLikeCommentRelation(User user, Comment comment) {
+        this.user = user;
+        this.comment = comment;
+    }
+
     public Long getId() {
         return id;
     }

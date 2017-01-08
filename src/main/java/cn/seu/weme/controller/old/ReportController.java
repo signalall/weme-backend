@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/report_route")
+//@RequestMapping(value = "/report_route")
 public class ReportController {
 
     @RequestMapping(value = "/publishreport", method = RequestMethod.POST)

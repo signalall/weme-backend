@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/activity_route")
+//@RequestMapping(value = "/activity_route")
 public class ActivityController {
 
     @Autowired
@@ -148,9 +149,69 @@ public class ActivityController {
         String token = jsonObject.getString("token");
         Long activityId = jsonObject.getLong("activityid");
         int page = jsonObject.getInt("page");
-        // TODO: 2017-1-4
+        return activityService.getActivityAttendUsers(token, activityId, page);
+    }
+
+
+    @RequestMapping(value = "/setpassuser", method = RequestMethod.POST)
+    public ResponseInfo setPassUser(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long activityId = jsonObject.getLong("activityid");
+        List<Long> userIds = jsonObject.getJSONArray("userlist");
+
+        return activityService.setPassUser(token, activityId, userIds);
+    }
+
+
+    @RequestMapping(value = "/deletepassuser", method = RequestMethod.POST)
+    public ResponseInfo deletePassUser(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long activityId = jsonObject.getLong("activityid");
+        List<Long> userIds = jsonObject.getJSONArray("userlist");
+
+        return activityService.deletePassUser(token, activityId, userIds);
+    }
+
+    @RequestMapping(value = "/commenttoactivity", method = RequestMethod.POST)
+    public ResponseInfo commentToActivity(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        String body = jsonObject.getString("body");
+        Long activityId = jsonObject.getLong("activityid");
+
+        return activityService.commentToActivity(token,activityId,body);
+    }
+
+
+    @RequestMapping(value = "/commenttocommentact", method = RequestMethod.POST)
+    public ResponseInfo commentToActivityComment(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        String body = jsonObject.getString("body");
+        Long commentId = jsonObject.getLong("destcommentid");
+
+        return activityService.commentToActivityComent(token,commentId,body);
+    }
+
+
+
+    @RequestMapping(value = "/likecommentact", method = RequestMethod.POST)
+    public ResponseInfo likeActivityComment(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long commentId = jsonObject.getLong("commentid");
+// TODO: 2017-1-4 likenumber
+        return activityService.likeAcivityComment(token,commentId);
+    }
+
+    @RequestMapping(value = "/getactivitycomment", method = RequestMethod.POST)
+    public ResponseInfo getActivityComent(@RequestBody JSONObject jsonObject){
+        String token = jsonObject.getString("token");
+        Long commentId = jsonObject.getLong("commentid");
+
+        Long endId = jsonObject.getLong("endid");
+
+        // TODO: 2017-1-4  
         return null;
     }
+
 
 
 }

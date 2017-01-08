@@ -3,16 +3,17 @@ package cn.seu.weme.entity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.jboss.logging.annotations.Pos;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by LCN on 2016-12-18.
  */
 @Entity
-@Table(name="t_comment")
+@Table(name = "t_comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,7 +30,67 @@ public class Comment {
     private Post post;
 
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "comment",targetEntity = CommentImage.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Comment.class)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Comment.class)
+    @JoinColumn(name = "authoruser_id")
+    private User authorUser;
+
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Comment.class)
+    @JoinColumn(name = "to_user_id")
+    private User toUser;  //该评论的指向用户
+
+
+    @Column(nullable = false)
+    private int type = 0; //评论的类型  1:to post   2: to activity 3:to comment
+
+    private boolean hasImage = false;
+
+
+
+    public User getToUser() {
+        return toUser;
+    }
+
+    public void setToUser(User toUser) {
+        this.toUser = toUser;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    private boolean state = false; //是否阅读
+
+    public boolean isState() {
+        return state;
+    }
+
+    public void setState(boolean state) {
+        this.state = state;
+    }
+
+    public User getAuthorUser() {
+        return authorUser;
+    }
+
+    public void setAuthorUser(User authorUser) {
+        this.authorUser = authorUser;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Activity.class)
+    @JoinColumn(name = "activity_id")
+    private Activity activity;
+
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment", targetEntity = CommentImage.class)
     @LazyCollection(
             LazyCollectionOption.EXTRA
     )
@@ -46,6 +107,14 @@ public class Comment {
 
     public Long getId() {
         return id;
+    }
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
     }
 
     public void setId(Long id) {
@@ -90,5 +159,22 @@ public class Comment {
 
     public void setUserLikeCommentRelations(List<UserLikeCommentRelation> userLikeCommentRelations) {
         this.userLikeCommentRelations = userLikeCommentRelations;
+    }
+
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+    }
+
+
+    public boolean isHasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
 }

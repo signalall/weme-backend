@@ -1,5 +1,6 @@
 package cn.seu.weme.common.aspect;
 
+import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -38,19 +39,22 @@ public class WebLogAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        // 记录下请求内容
         logger.info("URL : " + request.getRequestURL().toString());
         logger.info("HTTP_METHOD : " + request.getMethod());
         logger.info("IP : " + request.getRemoteAddr());
         logger.info("CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
-        logger.info("ARGS : " + Arrays.toString(joinPoint.getArgs()));
+//        logger.info("ARGS : " + JSONObject.fromObject(joinPoint.getArgs()));
 
     }
 
     @AfterReturning(returning = "ret", pointcut = "webLog()")
     public void doAfterReturning(Object ret) throws Throwable {
         // 处理完请求，返回内容
-        logger.info("RESPONSE : " + ret);
+        if (ret !=null){
+            logger.info("RESPONSE : " + JSONObject.fromObject(ret));
+        }else {
+            logger.info("RESPONSE : " + null);
+        }
         logger.info("SPEND TIME : " + (System.currentTimeMillis() - startTime.get()));
     }
 }

@@ -1,87 +1,110 @@
 package cn.seu.weme.controller.old;
 
+import cn.seu.weme.common.result.ResponseInfo;
+import cn.seu.weme.service.FriendService;
+import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 /**
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/friends_route")
+//@RequestMapping(value = "/friends_route")
 public class FriendController {
 
-    @RequestMapping(value = "/visit", method = RequestMethod.POST)
-    public Map visit() {
+    @Autowired
+    private FriendService friendService;
 
-        return null;
+    @RequestMapping(value = "/visit", method = RequestMethod.POST)
+    public ResponseInfo visit(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long userId = jsonObject.getLong("userId");
+        return friendService.visit(token, userId);
     }
 
 
     @RequestMapping(value = "/visitinfo", method = RequestMethod.POST)
-    public Map visitInfo() {
-
-        return null;
+    public ResponseInfo visitInfo(@RequestBody JSONObject jsonObject) {
+        Long userId = jsonObject.getLong("userId");
+        return friendService.getVisitInfo(userId);
     }
 
 
     @RequestMapping(value = "/follow", method = RequestMethod.POST)
-    public Map follow() {
-
-        return null;
+    public ResponseInfo follow(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long userId = jsonObject.getLong("userId");
+        return friendService.follow(token, userId);
     }
 
 
     @RequestMapping(value = "/unfollow", method = RequestMethod.POST)
-    public Map unfollow() {
-
-        return null;
+    public ResponseInfo unfollow(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long userId = jsonObject.getLong("userId");
+        return friendService.unFollow(token, userId);
     }
 
 
     @RequestMapping(value = "/followview", method = RequestMethod.POST)
-    public Map followView() {
-
-        return null;
+    public ResponseInfo followView(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long userId = jsonObject.getLong("userId");
+        int page = jsonObject.getInt("page");
+        String direction = jsonObject.getString("direction");
+        int direct = 0;
+        if (direction.equals("followers"))
+            direct = 0;
+        else {
+            direct = 1;
+        }
+        return friendService.getFollowView(token, page, direct);
     }
 
 
     @RequestMapping(value = "/searchuser", method = {RequestMethod.POST, RequestMethod.GET})
-    public Map searchUser() {
-
-        return null;
+    public ResponseInfo searchUser(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        String text = jsonObject.getString("text");
+        return friendService.searchUser(token, text);
     }
 
     @RequestMapping(value = "/getrecommenduser", method = {RequestMethod.POST, RequestMethod.GET})
-    public Map getReCommendUser() {
+    public ResponseInfo getReCommendUser(@RequestBody JSONObject jsonObject) {
         return null;
     }
 
 
     @RequestMapping(value = "/getrecommendusers", method = {RequestMethod.POST, RequestMethod.GET})
-    public Map getReCommendUsers() {
+    public ResponseInfo getReCommendUsers(@RequestBody JSONObject jsonObject) {
         return null;
     }
 
     @RequestMapping(value = "/likeusercard", method = RequestMethod.POST)
-    public Map likeUserCard() {
+    public ResponseInfo likeUserCard(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long userId = jsonObject.getLong("userid");
 
-        return null;
+        return friendService.likeUserCard(token, userId);
     }
 
 
     @RequestMapping(value = "/unlikeusercard", method = RequestMethod.POST)
-    public Map unLikeUserCard() {
+    public ResponseInfo unLikeUserCard(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Long userId = jsonObject.getLong("userid");
 
-        return null;
+        return friendService.unLikeUserCard(token, userId);
     }
 
 
     @RequestMapping(value = "/getlikeusernumber", method = RequestMethod.POST)
-    public Map getLikeUserNumber() {
-
-        return null;
+    public ResponseInfo getLikeUserNumber(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        return friendService.getLikeUserNumber(token);
     }
 }

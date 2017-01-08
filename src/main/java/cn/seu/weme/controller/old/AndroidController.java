@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by LCN on 2017-1-3.
  */
 @RestController
-@RequestMapping(value = "/androidapk_route")
+//@RequestMapping(value = "/androidapk_route")
 public class AndroidController {
 
     @RequestMapping(value = "/checkapkversion", method = RequestMethod.POST)
