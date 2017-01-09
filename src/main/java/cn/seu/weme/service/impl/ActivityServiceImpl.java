@@ -8,6 +8,7 @@ import cn.seu.weme.dao.*;
 import cn.seu.weme.dto.old.ActivityVo;
 import cn.seu.weme.entity.*;
 import cn.seu.weme.service.ActivityService;
+import com.sun.xml.internal.ws.api.model.MEP;
 import org.joda.time.DateTime;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -508,4 +509,61 @@ public class ActivityServiceImpl implements ActivityService {
 
         return activityVo;
     }
+    ////////
+
+    @Override
+    public Map setPassActivity(String token,List<Long >activitylist)
+    {
+        Map<String,Object> result = new HashMap<>();
+        User user= userDao.findByToken(token);
+        if(user!=null && user.getUsername()=="adminstrator"){
+
+            for(Long tempid:activitylist)
+            {
+                Activity activity = activityDao.findOne(tempid);
+                activity.setPassFlag(1);
+                activityDao.save(activity);
+            }
+            result.put("state","successful");
+            result.put("reason","");
+            return result;
+        }
+        else
+        {
+            result.put("state","fail");
+            result.put("reason","非法用户");
+            return result;
+        }
+    }
+
+
+    //////
+    @Override
+    public Map setNoPassActivity(String token,List<Long> activitylist)
+    {
+        Map<String,Object> result = new HashMap<>();
+
+        User user =userDao.findByToken(token);
+        if(user!=null && user.getUsername()=="adminstrator"){
+
+            for(Long tempid:activitylist)
+            {
+                Activity activity = activityDao.findOne(tempid);
+                activity.setPassFlag(0);
+                activityDao.save(activity);
+            }
+            result.put("state","successful");
+            result.put("reason","");
+            return result;
+        }
+        else
+        {
+            result.put("state","fail");
+            result.put("reason","非法用户");
+            return result;
+        }
+
+
+    }
+
 }

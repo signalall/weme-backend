@@ -7,7 +7,6 @@ import cn.seu.weme.dto.SchoolInfoVo;
 import cn.seu.weme.dto.UserInfoVo;
 import cn.seu.weme.dto.UserVo;
 import cn.seu.weme.dto.old.ActivityVo;
-import org.apache.catalina.connector.Response;
 
 import java.util.Map;
 

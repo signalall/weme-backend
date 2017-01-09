@@ -25,7 +25,6 @@ public interface ActivityService {
 
     public void createActivities();
 
-
     public Map getActivitiesInfo(String token, int page);
 
     public Map getActivityDetail(String token, Long activityId);
@@ -46,6 +45,14 @@ public interface ActivityService {
     public ResponseInfo validateActivityUser(String token, Long activityId, Long userId);
 
     public ResponseInfo getActivityAttendUsers(String token, Long activityId, int page);
+
+    /////add
+
+    public Map setPassActivity(String token, List<Long>activitylist);
+
+    public Map setNoPassActivity(String token,List<Long> activitylist);
+
+
 
 
     public ResponseInfo setPassUser(String token, Long activityId, List<Long> userIds);
