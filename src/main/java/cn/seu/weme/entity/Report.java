@@ -1,6 +1,8 @@
 package cn.seu.weme.entity;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.ManyToAny;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,7 +17,7 @@ public class Report {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Comment.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "authoruser_id")
     private User authorUser;
 
