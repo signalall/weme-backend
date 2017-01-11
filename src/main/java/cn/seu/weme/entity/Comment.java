@@ -34,18 +34,18 @@ public class Comment {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Comment.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "authoruser_id")
     private User authorUser;
 
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Comment.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "to_user_id")
     private User toUser;  //该评论的指向用户
 
 
     @Column(nullable = false)
-    private int type = 0; //评论的类型  1:to post   2: to activity 3:to comment
+    private int type = 0; //评论的类型  0:to post   1: to activity
 
     private boolean hasImage = false;
 

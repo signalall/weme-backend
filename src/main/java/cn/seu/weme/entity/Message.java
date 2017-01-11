@@ -1,6 +1,8 @@
 package cn.seu.weme.entity;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -24,6 +26,8 @@ public class Message {
     @JoinColumn(name="sendto_id")
     private User sendTo;
 
+    @Lob
+    @Type(type="text")
     private String text;//不支持图片类型
 
     private boolean hasImage = false; //是否包含图片

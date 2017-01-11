@@ -112,10 +112,7 @@ public class FoodCardServiceImpl implements FoodCardService {
                 user.setWeme(user.getWeme()+WEMEGlobalParams.getWEMELIKE());
                 userDao.save(user);
 
-                foodcard.setLikeNumber(foodcard.getLikeFoodCards().size());
-
-                foodCardDao.save(foodcard);
-                int likeNumber = foodcard.getLikeNumber();
+                int likeNumber = foodcard.getLikeFoodCards().size();
 
                 m.put("state","successful");
                 m.put("reason", "");

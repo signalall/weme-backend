@@ -1,9 +1,6 @@
 package cn.seu.weme.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by LCN on 2016-12-21.
@@ -11,6 +8,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_activity_image")
 public class ActivityImage extends BaseImage {
+
 
 
     @ManyToOne

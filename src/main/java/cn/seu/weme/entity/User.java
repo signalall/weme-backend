@@ -18,12 +18,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Integer age;
     @Column(length = 32, unique = true)
     private String username;
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
+
     private String salt;
     private String token;
     @Column(length = 32)
@@ -37,7 +36,7 @@ public class User {
     private String name;
     @Column(length = 32)
     private String gender;
-    @Column(length = 32, unique = true)
+    @Column(length = 32)
     private String phone;
     @Column(length = 32)
     private String birthday;
@@ -57,7 +56,6 @@ public class User {
 
     @CreationTimestamp
     private Date timestamp;
-
 
     private Date latestLoginTime;
 
@@ -190,8 +188,7 @@ public class User {
         this.token = token;
     }
 
-    public User(Integer age, String username) {
-        this.age = age;
+    public User( String username) {
         this.username = username;
     }
 
@@ -204,13 +201,6 @@ public class User {
         this.id = id;
     }
 
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
 
     public String getUsername() {
         return username;

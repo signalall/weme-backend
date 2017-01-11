@@ -24,16 +24,38 @@ public class FoodCard {
 
     private String imageUrl;
 
+    private String title;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     private String location;
     private String longitude;
     private String latitude;
     private String price;
     private String comment;
 
-    private boolean passFlage;
+    public boolean isPassFlag() {
+        return passFlag;
+    }
+
+    public void setPassFlag(boolean passFlag) {
+        this.passFlag = passFlag;
+    }
+
+    private boolean passFlag;
+
+
 
     @Column(columnDefinition = "Boolean default false")
     private boolean disable = false;
+
+
     @CreationTimestamp
     private Date timestamp;
 

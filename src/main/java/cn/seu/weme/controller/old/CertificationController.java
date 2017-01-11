@@ -1,5 +1,8 @@
 package cn.seu.weme.controller.old;
 
+import cn.seu.weme.dao.UserDao;
+import cn.seu.weme.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +15,12 @@ import java.util.Map;
 @RestController
 //@RequestMapping(value = "/certification_route")
 public class CertificationController {
+
+    @Autowired
+    private UserService userService;
+
+
+
 
     @RequestMapping(value = "/publishcertification", method = RequestMethod.POST)
     public Map publishCertification() {

@@ -10,8 +10,8 @@ import javax.persistence.Table;
  * Created by LCN on 2017-1-6.
  */
 @Entity
-@Table(name = "t_poster_image")
-public class PosterImage extends BaseImage {
+@Table(name = "t_activity_poster_image")
+public class ActivityPosterImage extends BaseImage {
 
     @ManyToOne
     @JoinColumn(name = "activity_id")
@@ -23,5 +23,15 @@ public class PosterImage extends BaseImage {
 
     public void setActivity(Activity activity) {
         this.activity = activity;
+    }
+
+    public Integer rank;
+
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 }

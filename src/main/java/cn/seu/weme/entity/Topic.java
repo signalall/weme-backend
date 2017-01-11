@@ -28,7 +28,16 @@ public class Topic {
 
     private Integer rank;
 
-    private String imageUrl;
+    public Integer getPostNumber() {
+        return postNumber;
+    }
+
+    public void setPostNumber(Integer postNumber) {
+        this.postNumber = postNumber;
+    }
+
+    private Integer postNumber;
+
 
     @CreationTimestamp
     private Date timestamp;
@@ -95,13 +104,7 @@ public class Topic {
         this.rank = rank;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
 
     public Date getTimestamp() {
         return timestamp;

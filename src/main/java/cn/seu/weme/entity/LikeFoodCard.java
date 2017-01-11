@@ -19,7 +19,7 @@ public class LikeFoodCard {
     private User user;
 
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = FoodCard.class)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity  = FoodCard.class)
     @JoinColumn(name = "foodcard_id")
     private FoodCard foodCard;
 

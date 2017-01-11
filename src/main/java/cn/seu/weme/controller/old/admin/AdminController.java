@@ -1,9 +1,15 @@
 package cn.seu.weme.controller.old.admin;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import cn.seu.weme.service.ActivityService;
+import cn.seu.weme.service.AvatarCardService;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,59 +19,86 @@ import java.util.Map;
 @RequestMapping(value = "/adminuser_route")
 public class AdminController {
 
-    @RequestMapping(value = "/getallactivity", method = RequestMethod.POST)
-    public Map getAllActivities() {
+    @Autowired
+    private ActivityService activityService;
 
-        return null;
+    @Autowired
+    private AvatarCardService avatarCardService;
+
+    @RequestMapping(value = "/getallactivity", method = RequestMethod.POST)
+    public Map getAllActivities(@RequestBody JSONObject jsonObject) {
+        String token =  jsonObject.getString("token");
+        int page = jsonObject.getInt("page");
+        int number = jsonObject.getInt("number");
+
+        return activityService.getActivitiesInfo(token,page);
+
     }
 
 
     @RequestMapping(value = "/setpassactivity", method = RequestMethod.POST)
-    public Map setPassActivity() {
-
-        return null;
+    public Map setPassActivity(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        JSONArray jsonArray = JSONArray.fromObject( jsonObject.getString("activitylist"));
+        List<Long> longList =(List<Long>) JSONArray.toCollection(jsonArray);
+        return activityService.setPassActivity(token,longList);
     }
 
 
     @RequestMapping(value = "/setnopassactivity", method = RequestMethod.POST)
-    public Map setNoPassActivity() {
-
-        return null;
+    public Map setNoPassActivity(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        JSONArray jsonArray = JSONArray.fromObject( jsonObject.getString("activitylist"));
+        List<Long> longList =(List<Long>) JSONArray.toCollection(jsonArray);
+        return activityService.setNoPassActivity(token,longList);
     }
 
     @RequestMapping(value = "/getallusercard", method = RequestMethod.POST)
-    public Map getAllUserCard() {
-
-        return null;
+    public Map getAllUserCard(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        Integer page = jsonObject.getInt("page");
+        Integer number = jsonObject.getInt("number");
+        return avatarCardService.getAllUserCard(token,page,number);
     }
 
 
     @RequestMapping(value = "/getallusercardfilter", method = RequestMethod.POST)
-    public Map getAllUserCardFilter() {
+    public Map getAllUserCardFilter(@RequestBody JSONObject jsonObject) {
 
-        return null;
+        String token = jsonObject.getString("token");
+        Integer page = jsonObject.getInt("page");
+        Integer number = jsonObject.getInt("number");
+        return avatarCardService.getAllUserCard(token,page,number);
     }
 
-
     @RequestMapping(value = "/getallusercardbygender", method = RequestMethod.POST)
-    public Map getAllUserCardByGender() {
+    public Map getAllUserCardByGender(@RequestBody JSONObject jsonObject) {
 
-        return null;
+        String token = jsonObject.getString("token");
+        Integer page = jsonObject.getInt("page");
+        Integer number = jsonObject.getInt("number");
+        String gender = jsonObject.getString("gender");
+        return avatarCardService.getAllUserCardByGendder(token,page,number,gender);
+
     }
 
 
     @RequestMapping(value = "/setpassusercard", method = RequestMethod.POST)
-    public Map setPassUserCard() {
+    public Map setPassUserCard(@RequestBody JSONObject jsonObject) {
 
-        return null;
+        String token = jsonObject.getString("token");
+        JSONArray jsonArray = JSONArray.fromObject( jsonObject.getString("usercardlist"));
+        List<Long> longList =(List<Long>) JSONArray.toCollection(jsonArray);
+        return avatarCardService.setPassUserCard(token,longList);
     }
 
 
-
     @RequestMapping(value = "/setnopassusercard", method = RequestMethod.POST)
-    public Map setNoPassUserCard() {
-
-        return null;
+    public Map setNoPassUserCard(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        JSONArray jsonArray = JSONArray.fromObject( jsonObject.getString("usercardlist"));
+        List<Long> longList =(List<Long>) JSONArray.toCollection(jsonArray);
+        return avatarCardService.setPassUserCard(token,longList);
     }
 
 }

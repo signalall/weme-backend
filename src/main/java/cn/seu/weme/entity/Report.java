@@ -21,9 +21,10 @@ public class Report {
     @JoinColumn(name = "authoruser_id")
     private User authorUser;
 
+    @Lob
     private String body;
 
-    private int type = 0; //1: user 2:post 3:activity
+    private int type = 0; //1: user 2:post 3:activity 4：comment
 
     @JoinColumn(name = "be_report_id")
     private Long beReportedId;
@@ -31,6 +32,17 @@ public class Report {
 
     @CreationTimestamp
     private Date timestamp;
+
+
+    private  Integer typeid;
+
+    public Integer getTypeid() {
+        return typeid;
+    }
+
+    public void setTypeid(Integer typeid) {
+        this.typeid = typeid;
+    }
 
     public Long getId() {
         return id;

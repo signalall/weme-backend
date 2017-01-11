@@ -35,7 +35,7 @@ public class Activity {
 
     private Integer signnumber;
 
-    @Column(length = 32)
+    @Column(columnDefinition = "Boolean default false")
     private boolean state;
 
     private String sponser;
