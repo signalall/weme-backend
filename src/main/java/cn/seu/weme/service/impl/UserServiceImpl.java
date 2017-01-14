@@ -5,7 +5,10 @@ import cn.seu.weme.common.result.ResultInfo;
 import cn.seu.weme.common.result.ResultUtil;
 import cn.seu.weme.common.utils.*;
 import cn.seu.weme.dao.*;
-import cn.seu.weme.dto.*;
+import cn.seu.weme.dto.PersonImageVo;
+import cn.seu.weme.dto.SchoolInfoVo;
+import cn.seu.weme.dto.UserInfoVo;
+import cn.seu.weme.dto.UserVo;
 import cn.seu.weme.dto.old.ActivityVo;
 import cn.seu.weme.entity.*;
 import cn.seu.weme.service.UserService;
@@ -13,8 +16,10 @@ import com.google.common.base.Strings;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -326,11 +331,21 @@ public class UserServiceImpl implements UserService {
     public ResponseInfo sendSmsCode(String phone, int type) {
         ResponseInfo responseInfo = new ResponseInfo();
         boolean success = false;
-        if (userDao.findByPhone(phone) != null) {
-            responseInfo.setState("fail");
-            responseInfo.setReason("该手机号已经注册");
-            return responseInfo;
+
+        if (type == 1) {
+            if (userDao.findByPhone(phone) != null) {
+                responseInfo.setState("fail");
+                responseInfo.setReason("该手机号已经注册");
+                return responseInfo;
+            }
+        } else if (type == 2) {
+            if (userDao.findByPhone(phone) == null) {
+                responseInfo.setState("fail");
+                responseInfo.setReason("该手机号尚未注册");
+                return responseInfo;
+            }
         }
+
         String code = RandUtils.getRandomString(6);
         success = SmsUtils.sendSmsCodeByType(phone, code, type);
         if (!success) {
@@ -594,14 +609,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map getPersonImages(String token, Long imageId) {
-        User user = userDao.findByToken(token);
-        Long userId = user.getId();
+    public Map getPersonImages(Long userId, Long imageId) {
+        User user = userDao.findOne(userId);
         List<UserImage> userImages = new ArrayList<>();
+        Pageable pageable = new PageRequest(0, 10, Sort.Direction.DESC, "id");
         if (imageId == 0L) {
-            userImages = userImageDao.getPersonalImages(userId);
+            userImages = userImageDao.getPersonalImages(userId, pageable);
         } else {
-            userImages = userImageDao.getPersonalImages2(userId, imageId);
+            userImages = userImageDao.getPersonalImages2(userId, imageId, pageable);
         }
 
         List<Map> result = new ArrayList<>();
@@ -646,7 +661,7 @@ public class UserServiceImpl implements UserService {
         result.put("qq", user.getQq());
         result.put("hometown", user.getHometown());
 
-        result.put("lookcount", user.getLookCount());
+        result.put("lookcount", user.getVisitedRelations().size());
         result.put("weme", user.getWeme());
         result.put("id", user.getId());
 
@@ -680,7 +695,21 @@ public class UserServiceImpl implements UserService {
         }
 
         String birthFlag = "0";
-        // TODO: 2017-1-5 星座
+        if (me.getBirthday().compareTo(user.getBirthday()) < 0) {
+            birthFlag = "1";
+        } else if (me.getBirthday().compareTo(user.getBirthday()) > 0) {
+            birthFlag = "-1";
+        } else {
+            birthFlag = "0";
+        }
+
+
+        String voice = "";
+        if (user.getAvatarVoice() == null) {
+            voice = "";
+        } else {
+            voice = user.getAvatarVoice().getVoiceUrl();
+        }
 
 
         Map<String, Object> result = new HashMap<>();
@@ -702,14 +731,14 @@ public class UserServiceImpl implements UserService {
         result.put("qq", user.getQq());
         result.put("hometown", user.getHometown());
 
-        result.put("lookcount", user.getLookCount());
+        result.put("lookcount", user.getVisitedRelations().size());
         result.put("weme", user.getWeme());
         result.put("id", user.getId());
         result.put("followflag", followFlag);
         result.put("birthflag", birthFlag);
         result.put("certification", user.getCertification());
-        result.put("constellation", "");
-        result.put("voice", "");
+        result.put("constellation", ConstellationUtils.getConstellation(user.getBirthday()));  //星座
+        result.put("voice", voice);
 
         return result;
     }
@@ -750,8 +779,16 @@ public class UserServiceImpl implements UserService {
         result.put("id", user.getId());
 
         result.put("certification", user.getCertification());
-        result.put("constellation", "");
-        result.put("voice", "");
+        result.put("constellation", ConstellationUtils.getConstellation(user.getBirthday()));
+
+
+        String voice = "";
+        if (user.getAvatarVoice() == null) {
+            voice = "";
+        } else {
+            voice = user.getAvatarVoice().getVoiceUrl();
+        }
+        result.put("voice", voice);
 
         return result;
     }

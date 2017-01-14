@@ -79,7 +79,7 @@ public interface UserService {
 
     public Map setTag(String token, String tag);
 
-    public Map getPersonImages(String token, Long imageId);
+    public Map getPersonImages(Long userId, Long imageId);
 
     public Map getProfile(String token);
 

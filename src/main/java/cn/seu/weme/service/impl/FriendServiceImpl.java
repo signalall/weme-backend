@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,12 +68,12 @@ public class FriendServiceImpl implements FriendService {
     public ResponseInfo getVisitInfo(Long userId) {
         User user = userDao.findOne(userId);
         int totalCount = user.getVisitedRelations().size();
-        Query query = entityManager.createQuery("select count(uvr) from UserVisitRelation as uvr WHERE " +
-                "uvr.visited.id=?1 and url.timestamp between ?2 and ? 3");
+        Query query = entityManager.createQuery("select count(uvr.id) from UserVisitRelation as uvr WHERE " +
+                "uvr.visited.id=?1 and uvr.timestamp between :startTime and :endTime");
         DateTime nowTime = new DateTime();
         query.setParameter(1, userId);
-        query.setParameter(2, nowTime.withTimeAtStartOfDay());
-        query.setParameter(3, nowTime.millisOfDay().withMaximumValue());
+        query.setParameter("startTime", nowTime.withTimeAtStartOfDay().toDate(), TemporalType.DATE);
+        query.setParameter("endTime", nowTime.millisOfDay().withMaximumValue().toDate(), TemporalType.DATE);
         int todayCount = query.executeUpdate();
 
         Map<String, Object> result = new HashMap<>();

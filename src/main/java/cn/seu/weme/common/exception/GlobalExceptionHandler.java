@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
         ErrorInfo<String> r = new ErrorInfo<>();
         r.setMessage(e.getMessage());
         r.setCode(ErrorInfo.ERROR);
-        r.setData("Some Data");
+        r.setData("Server Exception");
         r.setUrl(req.getRequestURL().toString());
 
         logger.error(e.getMessage());

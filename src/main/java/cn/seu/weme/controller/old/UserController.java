@@ -18,7 +18,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
     @RequestMapping(value = "/sendsmscode", method = RequestMethod.POST)
     public ResponseInfo sendSmsCode(@RequestBody JSONObject jsonObject) {
         String phone = jsonObject.getString("phone");

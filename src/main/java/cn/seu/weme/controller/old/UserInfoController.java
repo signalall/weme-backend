@@ -27,7 +27,24 @@ public class UserInfoController {
 
     @RequestMapping(value = "/gettagsbyid", method = RequestMethod.POST)
     public Map getTags(@RequestBody JSONObject jsonObject) {
-        return null;
+        Map<String, Object> result = new HashMap<>();
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return failResponse();
+        }
+        Long userId = jsonObject.getLong("userid");
+        return userService.getTag(userId);
+    }
+
+    @RequestMapping(value = "/settags", method = RequestMethod.POST)
+    public Map setTags(@RequestBody JSONObject jsonObject) {
+        Map<String, Object> result = new HashMap<>();
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return failResponse();
+        }
+        String tagJson = jsonObject.getString("tags");
+        return userService.setTag(token, tagJson);
     }
 
 
@@ -35,10 +52,7 @@ public class UserInfoController {
     public Map getUserInfo(@RequestBody JSONObject jsonObject) {
         String token = jsonObject.getString("token");
         if (token == null || !checkUserService.validateUser(token)) {
-            Map<String, Object> result = new HashMap<>();
-            result.put("state", "fail");
-            result.put("reason", "用户不存在");
-            return result;
+            return failResponse();
         }
         return userService.getProfile(token);
     }
@@ -47,14 +61,12 @@ public class UserInfoController {
     @RequestMapping(value = "/getpersonalimages", method = RequestMethod.POST)
     public Map getPersonImages(@RequestBody JSONObject jsonObject) {
         String token = jsonObject.getString("token");
-
         if (token == null || !checkUserService.validateUser(token)) {
-            Map<String, Object> result = new HashMap<>();
-            result.put("state", "fail");
-            result.put("reason", "用户不存在");
-            return result;
+            return failResponse();
         }
-        return null;
+        Long userId = jsonObject.getLong("userid");
+        Long previousImageId = jsonObject.getLong("previous_id");
+        return userService.getPersonImages(userId, previousImageId);
     }
 
     @RequestMapping(value = "/getprofilebyid", method = {RequestMethod.POST, RequestMethod.GET})
@@ -63,12 +75,8 @@ public class UserInfoController {
         String token = jsonObject.getString("token");
         Long userId = jsonObject.getLong("id");
 
-
         if (token == null || !checkUserService.validateUser(token)) {
-            Map<String, Object> result = new HashMap<>();
-            result.put("state", "fail");
-            result.put("reason", "用户不存在");
-            return result;
+            return failResponse();
         }
 
         return userService.getProfileById(token, userId);
@@ -79,17 +87,19 @@ public class UserInfoController {
     public Map getProfileByIdPhone(@RequestBody JSONObject jsonObject) {
 
         String token = jsonObject.getString("token");
-        Long userId = jsonObject.getLong("userId");
-
-
+        Long userId = jsonObject.getLong("id");
         if (token == null || !checkUserService.validateUser(token)) {
-            Map<String, Object> result = new HashMap<>();
-            result.put("state", "fail");
-            result.put("reason", "用户不存在");
-            return result;
+            return failResponse();
         }
 
         return userService.getProfileByIdPhone(token, userId);
+    }
+
+    private Map failResponse() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("state", "fail");
+        result.put("reason", "用户不存在");
+        return result;
     }
 
 
