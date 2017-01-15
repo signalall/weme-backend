@@ -19,10 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LCN on 2017-1-5.
@@ -68,13 +65,14 @@ public class FriendServiceImpl implements FriendService {
     public ResponseInfo getVisitInfo(Long userId) {
         User user = userDao.findOne(userId);
         int totalCount = user.getVisitedRelations().size();
-        Query query = entityManager.createQuery("select count(uvr.id) from UserVisitRelation as uvr WHERE " +
+        Query query = entityManager.createQuery("select count(uvr) from UserVisitRelation as uvr WHERE " +
                 "uvr.visited.id=?1 and uvr.timestamp between :startTime and :endTime");
         DateTime nowTime = new DateTime();
         query.setParameter(1, userId);
         query.setParameter("startTime", nowTime.withTimeAtStartOfDay().toDate(), TemporalType.DATE);
         query.setParameter("endTime", nowTime.millisOfDay().withMaximumValue().toDate(), TemporalType.DATE);
-        int todayCount = query.executeUpdate();
+
+        Long todayCount = (Long) query.getSingleResult();
 
         Map<String, Object> result = new HashMap<>();
         result.put("total", totalCount);
@@ -170,13 +168,36 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public ResponseInfo searchUser(String token, String text) {
         User user = userDao.findByToken(token);
-        // TODO: 2017-1-5
-        return null;
+        Query query = entityManager.createQuery("select u from  User as u where u.name like :text");
+        query.setParameter("text", "%" + text + "%");
+        List<User> users = query.setMaxResults(10).getResultList();
+        List<Map> result = new ArrayList<>();
+        for (User user1 : users) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("id", user1.getId());
+            data.put("name", user1.getName());
+            data.put("gender", user1.getGender());
+            data.put("school", user1.getSchool());
+            result.add(data);
+        }
+
+        ResponseInfo responseInfo = new ResponseInfo();
+        responseInfo.setState("successful");
+        responseInfo.setReason("");
+        responseInfo.setResult(result);
+        return responseInfo;
     }
 
     @Override
     public ResponseInfo getRecommendUser(String token, Long userId) {
         // TODO: 2017-1-5
+        return null;
+    }
+
+    @Override
+    public ResponseInfo getReCommendUsers(String token) {
+        User user = userDao.findByToken(token);
+
         return null;
     }
 

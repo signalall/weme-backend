@@ -32,7 +32,7 @@ public class FriendController {
         if (token == null || !checkUserService.validateUser(token)) {
             return failResponse();
         }
-        Long userId = jsonObject.getLong("id");
+        Long userId = jsonObject.getLong("userid");
         return friendService.visit(token, userId);
     }
 
@@ -54,7 +54,7 @@ public class FriendController {
         if (token == null || !checkUserService.validateUser(token)) {
             return failResponse();
         }
-        Long userId = jsonObject.getLong("userId");
+        Long userId = jsonObject.getLong("id");
         return friendService.follow(token, userId);
     }
 
@@ -65,7 +65,7 @@ public class FriendController {
         if (token == null || !checkUserService.validateUser(token)) {
             return failResponse();
         }
-        Long userId = jsonObject.getLong("userId");
+        Long userId = jsonObject.getLong("id");
         return friendService.unFollow(token, userId);
     }
 
@@ -76,7 +76,6 @@ public class FriendController {
         if (token == null || !checkUserService.validateUser(token)) {
             return failResponse();
         }
-        Long userId = jsonObject.getLong("userId");
         int page = jsonObject.getInt("page");
         String direction = jsonObject.getString("direction");
         int direct = 0;
@@ -101,12 +100,21 @@ public class FriendController {
 
     @RequestMapping(value = "/getrecommenduser", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseInfo getReCommendUser(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return failResponse();
+        }
+
         return null;
     }
 
 
     @RequestMapping(value = "/getrecommendusers", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseInfo getReCommendUsers(@RequestBody JSONObject jsonObject) {
+        String token = jsonObject.getString("token");
+        if (token == null || !checkUserService.validateUser(token)) {
+            return failResponse();
+        }
         return null;
     }
 
@@ -114,7 +122,6 @@ public class FriendController {
     public ResponseInfo likeUserCard(@RequestBody JSONObject jsonObject) {
         String token = jsonObject.getString("token");
         Long userId = jsonObject.getLong("userid");
-
         return friendService.likeUserCard(token, userId);
     }
 

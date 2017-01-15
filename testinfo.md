@@ -21,3 +21,14 @@
 
 ### FriendController
 *  /visitinfo
+*  /searchuser
+*  /followview
+
+
+### ActivityController
+*  /getactivityinformation
+*  /getactivitydetail
+*  /activitytopofficial
+*  /signup
+*  /deletesignup
+*  /

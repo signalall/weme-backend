@@ -25,6 +25,7 @@ public class UserVisitRelation {
     private User visited;
 
     @CreationTimestamp
+    @Temporal(TemporalType.DATE)
     private Date timestamp;
 
 

@@ -36,7 +36,7 @@ public class Activity {
     private Integer signnumber;
 
     @Column(columnDefinition = "Boolean default false")
-    private boolean state;
+    private boolean state = false;
 
     private String sponser;
 
@@ -80,7 +80,7 @@ public class Activity {
     private User authorUser; //发起活动者
 
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = UserAttendActivityRelation.class, mappedBy = "user",
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = UserAttendActivityRelation.class, mappedBy = "activity",
             fetch = FetchType.LAZY)
     @LazyCollection(
             LazyCollectionOption.EXTRA
@@ -88,7 +88,7 @@ public class Activity {
     private List<UserAttendActivityRelation> userAttendActivityRelations = new ArrayList<>();
 
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = UserLikeActivityRelation.class, mappedBy = "user",
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = UserLikeActivityRelation.class, mappedBy = "activity",
             fetch = FetchType.LAZY)
     @LazyCollection(
             LazyCollectionOption.EXTRA
@@ -219,7 +219,6 @@ public class Activity {
     public void setLabel(String label) {
         this.label = label;
     }
-
 
 
     public Date getTimestamp() {

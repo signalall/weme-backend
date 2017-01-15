@@ -23,11 +23,11 @@ public interface UserDao extends CrudRepository<User, Long> {
 
     public User findByToken(String token);
 
-    @Query(value = "select count(*) from t_attend_user_activity where user_id =:userId and activity_id=:activityId",nativeQuery = true)
+    @Query(value = "select count(*) from t_user_attend_activity_relation where user_id =:userId and activity_id=:activityId", nativeQuery = true)
     public int isAttendActivity(@Param("userId") Long userId,@Param("activityId") Long activityId);
 
 
-    @Query(value = "select count(*) from t_like_user_activity where user_id =:userId and activity_id=:activityId",nativeQuery = true)
+    @Query(value = "select count(*) from t_user_like_activity_relation where user_id =:userId and activity_id=:activityId", nativeQuery = true)
     public int isLikeActivity(@Param("userId") Long userId,@Param("activityId") Long activityId);
 
 

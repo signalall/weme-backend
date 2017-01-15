@@ -46,13 +46,9 @@ public interface ActivityService {
 
     public ResponseInfo getActivityAttendUsers(String token, Long activityId, int page);
 
-    /////add
+    public Map setPassActivity(String token, List<Long> activitylist);
 
-    public Map setPassActivity(String token, List<Long>activitylist);
-
-    public Map setNoPassActivity(String token,List<Long> activitylist);
-
-
+    public Map setNoPassActivity(String token, List<Long> activitylist);
 
 
     public ResponseInfo setPassUser(String token, Long activityId, List<Long> userIds);
@@ -67,6 +63,12 @@ public interface ActivityService {
 
 
     public ResponseInfo likeAcivityComment(String token, Long commentId);
+
+
+    public ResponseInfo getactivitycomment(String token, Long activityId, Long limitNumber);
+
+
+    public Map getPosterImage();
 
 
 }

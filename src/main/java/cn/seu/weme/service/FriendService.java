@@ -21,6 +21,9 @@ public interface FriendService {
 
     public ResponseInfo getRecommendUser(String token, Long userId);
 
+
+    public ResponseInfo getReCommendUsers(String token);
+
     public ResponseInfo likeUserCard(String token, Long userId);
 
     public ResponseInfo unLikeUserCard(String token, Long userId);

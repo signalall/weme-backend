@@ -106,6 +106,7 @@ public class CommunityController {
     }
 
 
+    //置顶图片连接
     @RequestMapping(value = "/topofficial", method = RequestMethod.POST)
     public ResponseInfo topOfficial(@RequestBody JSONObject jsonObject) {
         String token = jsonObject.getString("token");

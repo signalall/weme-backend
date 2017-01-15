@@ -12,6 +12,6 @@ import java.util.List;
  */
 public interface ActivityDao extends CrudRepository<Activity, Long> {
 
-    @Query("from Activity a where a.title like :title")
+    @Query("select a from Activity a where a.title like :title")
     List<Activity> findActivitiesByTitle(@Param("title") String title);
 }

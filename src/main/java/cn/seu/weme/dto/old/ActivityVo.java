@@ -19,7 +19,7 @@ public class ActivityVo {
     private String signnumber;
     private String signstate;
     private String timestate;
-    private String sponsor;
+    private String sponser;
     private String whetherimage;
     private String detail;
     private String label;
@@ -29,6 +29,8 @@ public class ActivityVo {
     private String imageurl;
     private String likeflag;
     private String passState;
+
+    private String status;
 
 
     public String getPassState() {
@@ -167,12 +169,12 @@ public class ActivityVo {
         this.timestate = timestate;
     }
 
-    public String getSponsor() {
-        return sponsor;
+    public String getSponser() {
+        return sponser;
     }
 
-    public void setSponsor(String sponsor) {
-        this.sponsor = sponsor;
+    public void setSponser(String sponser) {
+        this.sponser = sponser;
     }
 
     public String getWhetherimage() {
@@ -214,5 +216,13 @@ public class ActivityVo {
 
     public void setImageurl(String imageurl) {
         this.imageurl = imageurl;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
