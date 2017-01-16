@@ -37,6 +37,9 @@ public class CommunityServiceImpl implements CommunityService {
     private CommentDao commentDao;
 
     @Autowired
+    private CommunityPosterImageDao communityPosterImageDao;
+
+    @Autowired
     private UserLikePostRelationDao userLikePostRelationDao;
 
     @Autowired
@@ -177,8 +180,8 @@ public class CommunityServiceImpl implements CommunityService {
         User user = userDao.findByToken(token);
 
         int pageSize = 10;
-        int index = (page - 1) * 10;
-        Query query = entityManager.createQuery("from Post p where p.topic.id = ?1 order by p.timestamp");
+        int index = (page - 1) * pageSize;
+        Query query = entityManager.createQuery("select p from Post as p where p.topic.id = ?1 order by p.timestamp desc");
         query.setParameter(1, topicId);
         List<Post> posts = query.setMaxResults(pageSize).setFirstResult(index).getResultList();
 
@@ -186,6 +189,17 @@ public class CommunityServiceImpl implements CommunityService {
 
 
         for (Post post : posts) {
+            List<String> imageUrl = new ArrayList<>();
+            List<String> thumbImageUrl = new ArrayList<>();
+            List<PostImage> images = post.getPostImages();
+            if (images.size() > 0) {
+                for (PostImage image :
+                        images) {
+                    imageUrl.add(image.getUrl());
+                    thumbImageUrl.add(image.getThumbnailUrl());
+                }
+            }
+
             User author = post.getPublishUser();
             Map<String, Object> data = new HashMap<>();
             data.put("postid", post.getId());
@@ -198,8 +212,8 @@ public class CommunityServiceImpl implements CommunityService {
             data.put("body", post.getBody());
             data.put("likenumber", post.getUserLikePostRelations().size());
             data.put("commentnumber", post.getComments().size());
-            data.put("imageurl", "");
-            data.put("thumbnail", "");
+            data.put("imageurl", imageUrl);
+            data.put("thumbnail", imageUrl);
             data.put("certification", author.getCertification());
 
             result.add(data);
@@ -221,6 +235,15 @@ public class CommunityServiceImpl implements CommunityService {
         Post post = postDao.findOne(postId);
         User author = post.getPublishUser();
         Map<String, Object> data = new HashMap<>();
+        List<String> imageUrl = new ArrayList<>();
+        List<String> thumbImageUrl = new ArrayList<>();
+        List<PostImage> images = post.getPostImages();
+        if (images.size() > 0) {
+            for (PostImage image : images) {
+                imageUrl.add(image.getUrl());
+                thumbImageUrl.add(image.getThumbnailUrl());
+            }
+        }
         data.put("postid", post.getId());
         data.put("userid", author.getId());
         data.put("name", author.getName());
@@ -231,9 +254,16 @@ public class CommunityServiceImpl implements CommunityService {
         data.put("body", post.getBody());
         data.put("likenumber", post.getUserLikePostRelations().size());
         data.put("commentnumber", post.getComments().size());
-        data.put("imageurl", "");
-        data.put("thumbnail", "");
-        data.put("certification", author.getCertification());
+        data.put("imageurl", imageUrl);
+        data.put("thumbnail", thumbImageUrl);
+
+        //TODO: 2017-1-16
+        data.put("likeusers", new ArrayList<>());
+        if (author.getCertification()) {
+            data.put("certification", "1");
+        } else {
+            data.put("certification", "0");
+        }
 
         ResponseInfo responseInfo = new ResponseInfo();
         responseInfo.setState("successful");
@@ -250,7 +280,7 @@ public class CommunityServiceImpl implements CommunityService {
 
         int pageSize = 10;
         int index = (page - 1) * 10;
-        Query query = entityManager.createQuery("from Post p where p.publishUser.id = ?1 and p.disable = false order by p.timestamp");
+        Query query = entityManager.createQuery("select p from Post p where p.publishUser.id = ?1 and p.disable = false order by p.timestamp");
         query.setParameter(1, userId);
         List<Post> posts = query.setMaxResults(pageSize).setFirstResult(index).getResultList();
 
@@ -286,7 +316,7 @@ public class CommunityServiceImpl implements CommunityService {
 
         int pageSize = 4;
         int index = (page - 1) * pageSize;
-        Query query = entityManager.createQuery("from Post p where p.publishUser.id = ?1 and p.disable = false order by p.timestamp");
+        Query query = entityManager.createQuery("select p from Post p where p.publishUser.id = ?1 and p.disable = false order by p.timestamp");
         query.setParameter(1, userId);
         List<Post> posts = query.setMaxResults(pageSize).setFirstResult(index).getResultList();
 
@@ -314,30 +344,65 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public ResponseInfo getPostComments(String token, Long postId, int page) {
+        Long userId = userDao.findByToken(token).getId();
 
         int pageSize = 10;
         int index = (page - 1) * pageSize;
-        Query query = entityManager.createQuery("from Comment c where c.post.id = ?1  order by c.timestamp");
+        Query query = entityManager.createQuery("select c from Comment c where c.post.id = ?1  order by c.timestamp");
         query.setParameter(1, postId);
         List<Comment> comments = query.setMaxResults(pageSize).setFirstResult(index).getResultList();
         List<Map> result = new ArrayList<>();
 
         for (Comment comment : comments) {
             Map<String, Object> data = new HashMap<>();
+            List<CommentImage> images = comment.getCommentImages();
+            List<String> imageUrl = new ArrayList<>();
+            List<String> thumbImageUrl = new ArrayList<>();
+
+            if (images.size() > 0) {
+                for (CommentImage image : images) {
+                    imageUrl.add(image.getUrl());
+                    thumbImageUrl.add(image.getThumbnailUrl());
+                }
+            }
             data.put("id", comment.getId());
-            data.put("image", "");
-            data.put("thumbnail", "");
-            data.put("userid", "");
-            data.put("name", "");
-            data.put("school", "");
-            data.put("gender", "");
-            data.put("timestamp", "");
-            data.put("body", "");
-            data.put("likenumber", "");
-            data.put("commentnumber", "");
-            data.put("reply", "");
-            data.put("flag", "");
-            data.put("certification", "");
+            data.put("image", imageUrl);
+            data.put("thumbnail", thumbImageUrl);
+
+            User user = comment.getAuthorUser();
+            data.put("userid", user.getId());
+            data.put("name", user.getName());
+            data.put("school", user.getSchool());
+            data.put("gender", user.getGender());
+            data.put("timestamp", comment.getTimestamp());
+            data.put("body", comment.getContent());
+            data.put("likenumber", comment.getUserLikeCommentRelations().size());
+
+            data.put("commentnumber", 0);
+            data.put("postid", "0");
+
+            //取回复这条评论的所有评论
+            Query query2 = entityManager.createQuery("select c from Comment c where c.comment.id = ?1  order by c.timestamp");
+            query2.setParameter(1, comment.getId());
+            List<Comment> comments2 = query2.getResultList();
+            int flag = 0;
+            for (Comment comment2 :
+                    comments2) {
+                if (userId.equals(comment2.getAuthorUser().getId())) {
+                    flag = 1;
+                }
+
+            }
+
+
+            data.put("reply", new ArrayList<>());
+            data.put("flag", flag);
+            if (user.getCertification()) {
+                data.put("certification", "1");
+            } else {
+                data.put("certification", "0");
+
+            }
             result.add(data);
         }
         entityManager.clear();
@@ -354,7 +419,7 @@ public class CommunityServiceImpl implements CommunityService {
 
         int pageSize = 10;
         int index = (page - 1) * pageSize;
-        Query query = entityManager.createQuery("from UserLikePostRelation ulr where ulr.post.id = ?1  order by ulr.timestamp");
+        Query query = entityManager.createQuery("select ulr from UserLikePostRelation ulr where ulr.post.id = ?1  order by ulr.timestamp");
         query.setParameter(1, postId);
         List<UserLikePostRelation> userLikePostRelations = query.setMaxResults(pageSize).setFirstResult(index).getResultList();
         List<Map> result = new ArrayList<>();
@@ -402,6 +467,60 @@ public class CommunityServiceImpl implements CommunityService {
         responseInfo.setState("successful");
         responseInfo.setReason("");
         responseInfo.setResult(data);
+        return responseInfo;
+    }
+
+    @Override
+    public ResponseInfo getTopicList(String token) {
+        ResponseInfo response = new ResponseInfo();
+        List<Map> result = new ArrayList<>();
+        List<Topic> topics = (List<Topic>) topicDao.findAll();
+
+        for (Topic topic : topics) {
+            Map<String, Object> data = new HashMap<>();
+            Query query = entityManager.createQuery("select tpi from TopicImage as tpi where tpi.topic.id =?1 order by " +
+                    "tpi.timestamp desc");
+            query.setParameter(1, topic.getId());
+            List<TopicImage> images = query.setMaxResults(1).getResultList();
+            data.put("imageurl", "");
+
+            if (images.size() > 0) {
+                data.put("imageurl", images.get(0).getUrl());
+            }
+            data.put("id", topic.getId());
+            data.put("theme", topic.getTheme());
+            data.put("note", topic.getNote());
+            data.put("number", topic.getNumber());
+
+            result.add(data);
+        }
+
+        entityManager.clear();
+        ;
+        response.setState("successful");
+        response.setResult("");
+        response.setResult(result);
+
+        return response;
+    }
+
+    @Override
+    public ResponseInfo getTopPosterImages() {
+
+        List<Map> result = new ArrayList<>();
+        List<CommunityPosterImage> images = (List<CommunityPosterImage>) communityPosterImageDao.findAll();
+        for (CommunityPosterImage image : images) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("postid", image.getPost().getId());
+            data.put("imageurl", image.getUrl());
+            result.add(data);
+        }
+
+        ResponseInfo responseInfo = new ResponseInfo();
+        responseInfo.setState("successful");
+        responseInfo.setReason("");
+        responseInfo.setResult(result);
+
         return responseInfo;
     }
 }

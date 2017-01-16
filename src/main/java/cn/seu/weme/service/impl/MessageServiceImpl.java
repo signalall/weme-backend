@@ -127,4 +127,11 @@ public class MessageServiceImpl implements MessageService {
         responseInfo.setNumber(num);
         return responseInfo;
     }
+
+    @Override
+    public ResponseInfo systemNotification(String token) {
+        User user = userDao.findByToken(token);
+
+        return null;
+    }
 }

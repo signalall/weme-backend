@@ -33,9 +33,7 @@ public class CommunityController {
         if (token == null || !checkUserService.validateUser(token)) {
             return checkUserService.failResponse();
         }
-
         Long postId = jsonObject.getLong("postid");
-
         return communityService.deletePost(token, postId);
     }
 
@@ -77,8 +75,6 @@ public class CommunityController {
         }
         Long commentId = jsonObject.getLong("destcommentid");
         String body = jsonObject.getString("body");
-
-
         return communityService.commentToComment(token, commentId, body);
     }
 
@@ -95,13 +91,11 @@ public class CommunityController {
 
     @RequestMapping(value = "/likecomment", method = RequestMethod.POST)
     public ResponseInfo likeComment(@RequestBody JSONObject jsonObject) {
-
         String token = jsonObject.getString("token");
         if (token == null || !checkUserService.validateUser(token)) {
             return checkUserService.failResponse();
         }
         Long commentId = jsonObject.getLong("commentid");
-
         return communityService.likeComment(token, commentId);
     }
 
@@ -113,7 +107,7 @@ public class CommunityController {
         if (token == null || !checkUserService.validateUser(token)) {
             return checkUserService.failResponse();
         }
-        return null;
+        return communityService.getTopPosterImages();
     }
 
     @RequestMapping(value = "/gettopiclist", method = RequestMethod.POST)
@@ -122,7 +116,7 @@ public class CommunityController {
         if (token == null || !checkUserService.validateUser(token)) {
             return checkUserService.failResponse();
         }
-        return null;
+        return communityService.getTopicList(token);
     }
 
 
@@ -143,7 +137,7 @@ public class CommunityController {
             return checkUserService.failResponse();
         }
         int page = jsonObject.getInt("page");
-        Long topicId = jsonObject.getLong("topicId");
+        Long topicId = jsonObject.getLong("topicid");
         return communityService.getTopicPostList(token, topicId, page);
     }
 

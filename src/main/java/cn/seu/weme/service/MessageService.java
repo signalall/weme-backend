@@ -28,4 +28,6 @@ public interface MessageService {
     public ResponseInfo getUnReadMessageNum(String token);
 
 
+    public ResponseInfo systemNotification(String token);
+
 }
