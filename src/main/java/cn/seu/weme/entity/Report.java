@@ -34,6 +34,11 @@ public class Report {
     private Date timestamp;
 
 
+    
+
+
+
+
     private  Integer typeid;
 
     public Integer getTypeid() {
