@@ -38,5 +38,11 @@ public interface CommunityService {
     ResponseInfo getCommentByCommentId(String token,Long commentId,int page);
 
 
+    ResponseInfo getTopicList(String token);
+
+
+    ResponseInfo getTopPosterImages();
+
+
 
 }
