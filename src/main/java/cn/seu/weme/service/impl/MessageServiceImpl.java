@@ -151,7 +151,7 @@ public class MessageServiceImpl implements MessageService {
 
         for (Message message : sendTos) {
             Map<String, Object> data = new HashMap<>();
-            User sendTo = message.getSendFrom();
+            User sendTo = message.getSendTo();
             data.put("unreadnum", 0);
             data.put("SendId", sendTo.getId());
             data.put("name", sendTo.getName());
@@ -177,7 +177,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public ResponseInfo getMessageDetailList(String token, Long sendId, int page) {
-        Pageable pageable = new PageRequest(page, 10, Sort.Direction.DESC, "timestamp");
+        Pageable pageable = new PageRequest(page - 1, 10, Sort.Direction.DESC, "timestamp");
         List<Message> messages = messageDao.getMessageBiDirection(sendId, pageable);
         List<Map> result = new ArrayList<>();
         for (Message message : messages) {

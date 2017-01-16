@@ -1,6 +1,5 @@
 package cn.seu.weme.entity;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
