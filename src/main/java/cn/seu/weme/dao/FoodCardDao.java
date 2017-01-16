@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface FoodCardDao extends CrudRepository<FoodCard, Long> {
 
-    @Query("from FoodCard a where a.passFlag = true ")
+    @Query("select a from FoodCard a where a.passFlag = true ")
     List<FoodCard> findActivityByPassFlagTrue();
 
 }

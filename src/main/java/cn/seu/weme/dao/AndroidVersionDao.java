@@ -9,6 +9,6 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface AndroidVersionDao extends CrudRepository<AndroidVersion, Long> {
 
-    @Query("from AndroidVersion  a where a.disable = true order by a.timestamp desc")
+    @Query("select a from AndroidVersion  a where a.disable = true order by a.timestamp desc")
     AndroidVersion getNewestAndroidVersion();
 }

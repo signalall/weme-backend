@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by LCN on 2017-1-3.
  */
@@ -54,7 +51,7 @@ public class FriendController {
         if (token == null || !checkUserService.validateUser(token)) {
             return failResponse();
         }
-        Long userId = jsonObject.getLong("userId");
+        Long userId = jsonObject.getLong("id");
         return friendService.follow(token, userId);
     }
 
@@ -65,7 +62,7 @@ public class FriendController {
         if (token == null || !checkUserService.validateUser(token)) {
             return failResponse();
         }
-        Long userId = jsonObject.getLong("userId");
+        Long userId = jsonObject.getLong("id");
         return friendService.unFollow(token, userId);
     }
 
@@ -76,7 +73,6 @@ public class FriendController {
         if (token == null || !checkUserService.validateUser(token)) {
             return failResponse();
         }
-        Long userId = jsonObject.getLong("userId");
         int page = jsonObject.getInt("page");
         String direction = jsonObject.getString("direction");
         int direct = 0;

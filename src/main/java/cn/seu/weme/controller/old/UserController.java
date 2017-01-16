@@ -1,6 +1,8 @@
 package cn.seu.weme.controller.old;
 
 import cn.seu.weme.common.result.ResponseInfo;
+import cn.seu.weme.service.CheckUserService;
+import cn.seu.weme.service.MessageService;
 import cn.seu.weme.service.UserService;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -10,20 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 /**
  * Created by LCN on 2017-1-3.
  */
 @RestController
-//@RequestMapping(value = "/personalmessage_route")
 public class MessageController {
 
 
     @Autowired
-    private CheckUserService checkUserService;
-    @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private CheckUserService checkUserService;
 
 
     @RequestMapping(value = "/unreadmessagenum", method = RequestMethod.POST)
@@ -55,12 +53,12 @@ public class MessageController {
         if (token == null || !checkUserService.validateUser(token)) {
             return checkUserService.failResponse();
         }
-        return null;
+        return messageService.systemNotification(token);
     }
 
 
     @RequestMapping(value = "/sendmessage", method = RequestMethod.POST)
-    private ResponseInfo sendMessage(@RequestBody JSONObject jsonObject) {
+    public ResponseInfo sendMessage(@RequestBody JSONObject jsonObject) {
         String token = jsonObject.getString("token");
         if (token == null || !checkUserService.validateUser(token)) {
             return checkUserService.failResponse();

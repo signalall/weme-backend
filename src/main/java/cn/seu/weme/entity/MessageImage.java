@@ -9,14 +9,15 @@ import javax.persistence.*;
 @Table(name = "t_message_image")
 public class MessageImage extends BaseImage {
 
-    @Column(unique = true)
-    private Long messageId;
+    @ManyToOne
+    @JoinColumn(name = "message_id")
+    private Message message;
 
-    public Long getMessageId() {
-        return messageId;
+    public Message getMessage() {
+        return message;
     }
 
-    public void setMessageId(Long messageId) {
-        this.messageId = messageId;
+    public void setMessage(Message message) {
+        this.message = message;
     }
 }

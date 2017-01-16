@@ -12,6 +12,9 @@ public interface MessageService {
     //设置comment已读
     public ResponseInfo readComment(String token, Long commentId);
 
+    public ResponseInfo systemNotification(String token);
+
+
     public ResponseInfo getAllUnReadComment(String token);
 
     public ResponseInfo sendMessage(String token, Long userId, String text);
@@ -28,6 +31,5 @@ public interface MessageService {
     public ResponseInfo getUnReadMessageNum(String token);
 
 
-    public ResponseInfo systemNotification(String token);
 
 }
