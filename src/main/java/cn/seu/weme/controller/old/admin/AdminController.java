@@ -25,14 +25,14 @@ public class AdminController {
     @Autowired
     private AvatarCardService avatarCardService;
 
-    @RequestMapping(value = "/getallactivity", method = RequestMethod.POST)
-    public Map getAllActivities(@RequestBody JSONObject jsonObject) {
-        String token =  jsonObject.getString("token");
-        int page = jsonObject.getInt("page");
-        int number = jsonObject.getInt("number");
 
-        return activityService.getActivitiesInfo(token,page);
+        @RequestMapping(value = "/getallactivity", method = RequestMethod.POST)
+        public Map getAllActivities(@RequestBody JSONObject jsonObject) {
+            String token =  jsonObject.getString("token");
+            int page = jsonObject.getInt("page");
+            int number = jsonObject.getInt("number");
 
+            return activityService.getActivitiesInfo(token,page);
     }
 
 

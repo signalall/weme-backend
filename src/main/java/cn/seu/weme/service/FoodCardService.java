@@ -9,11 +9,11 @@ import java.util.Map;
  */
 public interface FoodCardService {
 
-    Map publishCard(String token,String title,String location,String longtitude ,String latitude ,Double price ,String comment);
+    ResponseInfo publishCard(String token,String title,String location,String longtitude ,String latitude ,Double price ,String comment);
 
-    Map likeFoodCard(String token, long foodcardid);
+    ResponseInfo likeFoodCard(String token, Long foodcardid);
 
-    Map getFoodCard(String token);
+    ResponseInfo getFoodCard(String token);
 
 
 

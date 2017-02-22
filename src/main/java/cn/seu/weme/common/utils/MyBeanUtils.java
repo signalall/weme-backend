@@ -25,7 +25,7 @@ public class MyBeanUtils extends org.springframework.beans.BeanUtils {
                     try {
                         Method readMethod = sourcePd.getReadMethod();
                         if (!Modifier.isPublic(readMethod.getDeclaringClass().getModifiers())) {
-                            readMethod.setAccessible(true);
+                            readMethod.setAccessible(true);//////如果类中成员变量为private
                         }
                         Object value = readMethod.invoke(source);
                         // 这里判断以下value是否为空 当然这里也能进行一些特殊要求的处理 例如绑定时格式转换等等

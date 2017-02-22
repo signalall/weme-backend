@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.cert.CertPathValidatorException;
 import java.util.*;
@@ -38,15 +39,14 @@ public class FoodCardServiceImpl implements FoodCardService {
     private UserDao userDao;
 
     @Override
-    public Map publishCard(String token,String title,String location,String longtitude ,String latitude ,Double price ,String comment)
+    public ResponseInfo publishCard(String token,String title,String location,String longtitude ,String latitude ,Double price ,String comment)
     {
-        Map<String,Object> result = new HashMap<>();
+
         User user =userDao.findByToken(token);
         if (user == null) {
-            result.put("state","fail");
-            result.put("reason","no user");
-            return result;
-            //return new ResponseInfo("fail","no user");
+
+            //return result;
+            return new ResponseInfo("fail","no user");
         }
         else
         {
@@ -66,21 +66,18 @@ public class FoodCardServiceImpl implements FoodCardService {
 
                 foodCardDao.save(foodcard);
                 long id = foodcard.getId();
-                result.put("state","successful");
-                result.put("reason","");
-                result.put("id",id);
-                return result;
-                //return new ResponseInfo("successful","",id);
+
+                ResponseInfo responseInfo = new ResponseInfo("successful","");
+                responseInfo.setId(id);
+                return responseInfo;
 
 
             }
             catch (Exception e)
             {
                 logger.info(e.getMessage());
-                //return new ResponseInfo("fail","exception");
-                result.put("state","fail");
-                result.put("reason","exception");
-                return result;
+                return new ResponseInfo("fail","exception");
+
             }
 
         }
@@ -88,16 +85,14 @@ public class FoodCardServiceImpl implements FoodCardService {
     }
 
     @Override
-    public Map likeFoodCard(String token,long foodcardid)
+    public ResponseInfo likeFoodCard(String token,Long foodcardid)
     {
         User user = userDao.findByToken(token);
         Map<String,Object> m =new HashMap<>();
         if (user==null)
         {
 
-            m.put("state","fail");
-            m.put("reason","no user");
-            return m;
+           return new ResponseInfo("fail","no user");
         }
         else
         {
@@ -114,25 +109,20 @@ public class FoodCardServiceImpl implements FoodCardService {
 
                 int likeNumber = foodcard.getLikeFoodCards().size();
 
-                m.put("state","successful");
-                m.put("reason", "");
-                m.put("likenumber",likeNumber);
-                return m;
+                ResponseInfo ret = new ResponseInfo("successful","");
+                ret.setLikenumber(likeNumber);
+                return ret;
 
             }
             else
             {
-
-                m.put("state","fail");
-                m.put("reason", "already like");
-                return m;
-
+                return new ResponseInfo("fail","already like");
             }
         }
     }
 
     @Override
-    public Map getFoodCard(String token)
+    public ResponseInfo getFoodCard(String token)
     {
         User user=  userDao.findByToken(token);
         Map<String,Object> m = new HashMap<>();
@@ -154,27 +144,22 @@ public class FoodCardServiceImpl implements FoodCardService {
             }
             if(foodCard.size()>0)
             {
-                m.put("state","successful");
-                m.put("reason","");
-                m.put("result",foodresult);
-                return m;
+                ResponseInfo ret = new ResponseInfo("successful","");
+                ret.setResult(foodresult);
+                return ret;
             }
             else
             {
-                m.put("result","");
-                m.put("state","fail");
-                m.put("reason","no card");
-                return m;
+                return new ResponseInfo("fail","no card");
+
             }
 
 
         }
         else
         {
-            m.put("result","");
-            m.put("state","fail");
-            m.put("reason","no user");
-            return m;
+            return new ResponseInfo("fail","no user");
+
         }
 
 
