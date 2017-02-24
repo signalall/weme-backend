@@ -25,14 +25,14 @@ public class FoodCardDaoTest extends BaseTest {
     @Autowired
     private LikeFoodCardDao likeFoodCardDao;
 
-    @Test
+    //    @Test
     public void addFoodCard() {
         FoodCard foodCard = new FoodCard();
         foodCard.setComment("comment test");
         foodCardDao.save(foodCard);
     }
 
-    @Test
+    //    @Test
     public void likeFoodCard() {
         User user = userDao.findOne(113L);
         FoodCard foodCard = foodCardDao.findOne(2L);
@@ -42,7 +42,7 @@ public class FoodCardDaoTest extends BaseTest {
         likeFoodCardDao.save(likeFoodCard);
     }
 
-    @Test
+    //    @Test
     public void testGetLikeUser() {
         FoodCard foodCard = foodCardDao.findOne(2L);
         foodCard.getLikeFoodCards();

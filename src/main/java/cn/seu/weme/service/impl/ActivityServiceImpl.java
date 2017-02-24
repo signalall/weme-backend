@@ -9,10 +9,8 @@ import cn.seu.weme.dao.*;
 import cn.seu.weme.dto.old.ActivityVo;
 import cn.seu.weme.entity.*;
 import cn.seu.weme.service.ActivityService;
-import com.sun.xml.internal.ws.api.model.MEP;
 import org.joda.time.DateTime;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.QueryTimeoutException;
 import java.util.*;
 
 /**

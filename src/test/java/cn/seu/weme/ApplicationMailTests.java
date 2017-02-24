@@ -17,7 +17,7 @@ public class ApplicationMailTests extends BaseTest {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Test
+    //    @Test
     public void sendSimpleMail() throws Exception {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("lucannan_samuel@163.com");

@@ -22,7 +22,7 @@ public class CommentTest extends BaseTest {
     private CommentDao commentDao;
 
 
-    @Test
+    //    @Test
     public void testCommentToActivity() {
         Activity activity = activityDao.findOne(1L);
         Comment comment = new Comment();

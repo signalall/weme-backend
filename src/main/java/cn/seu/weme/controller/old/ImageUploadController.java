@@ -45,7 +45,11 @@ public class ImageUploadController {
         uploadFileVo.setPath(path);
         uploadFileVo.setTopicId(topicId);
 
+        ResponseInfo responseInfo = new ResponseInfo();
+        responseInfo.setResult(uploadFileVo);
 
-        return imageUploadService.uploadFile(uploadFileVo);
+//        return imageUploadService.uploadFile(uploadFileVo);
+        //test 123
+        return responseInfo;
     }
 }

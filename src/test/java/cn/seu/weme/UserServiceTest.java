@@ -22,8 +22,7 @@ public class UserServiceTest extends BaseTest{
     @Autowired
     private UserDao userDao;
 
-    @Test
-    @Transactional
+    //    @Test
     public void testAttendActivities() {
         long starTime = System.currentTimeMillis();
         for (int i = 21; i < 30; i++) {

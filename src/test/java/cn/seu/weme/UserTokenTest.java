@@ -33,7 +33,6 @@ public class UserTokenTest extends BaseTest {
     }
 
 
-    @Test
     public void generateToken() {
         List<User> users = (List<User>) userDao.findAll();
         for (User user : users) {

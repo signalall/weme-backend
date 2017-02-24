@@ -20,7 +20,7 @@ public class MongoUserTest extends BaseTest {
     private MongoUserDao mongoUserDao;
 
 
-    @Test
+    //    @Test
     public void test() throws Exception {
 
         mongoUserDao.save(new MongoUser(1L, "didi", 30));

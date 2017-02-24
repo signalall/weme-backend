@@ -31,7 +31,7 @@ public class UserServiceTest extends BaseTest {
     @Autowired
     private UserVisitRelationDao userVisitRelationDao;
 
-    @Test
+    //    @Test
     public void testAddUser() {
 //        User user1 = new User();
 //        user1.setPassword("123");
@@ -46,7 +46,7 @@ public class UserServiceTest extends BaseTest {
 
     }
 
-    @Test
+    //    @Test
     public void testFollowUser() {
         User follower = userDao.findOne(1L);
         User followed = userDao.findOne(2L);
@@ -55,7 +55,7 @@ public class UserServiceTest extends BaseTest {
     }
 
 
-    @Test
+    //    @Test
     public void testVisitUser() {
         User visiter = userDao.findOne(1L);
         User visited = userDao.findOne(2L);
@@ -64,7 +64,7 @@ public class UserServiceTest extends BaseTest {
     }
 
 
-    @Test
+    //    @Test
     public void testGetVisitedUser(){
         User visiter = userDao.findOne(1L);
 //        List<UserVisitRelation> visterRelations = visiter.getVisterRelations();

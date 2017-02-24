@@ -19,22 +19,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         String token = "";
 
-
-//        if ("POST".equalsIgnoreCase(request.getMethod())) {
-//            try {
-//                InputStream is = null;
-//                String contentStr = "";
-//                is = request.getInputStream();
-//                contentStr = IOUtils.toString(is, "utf-8");
-//                JSONObject jsonObject = JSONObject.fromObject(contentStr);
-//                token = jsonObject.getString("token");
-//            } catch (Exception e) {
-//                return false;
-//            }
-//
-//        }
-
-
         if (true)
             return true;
 

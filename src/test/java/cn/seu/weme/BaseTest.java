@@ -8,8 +8,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 /**
  * Created by LCN on 2016-12-19.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@SpringApplicationConfiguration(classes = Application.class)
+//@WebAppConfiguration
 public class BaseTest {
 }

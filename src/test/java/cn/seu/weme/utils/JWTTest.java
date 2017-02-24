@@ -84,7 +84,7 @@ public class JWTTest {
     }
 
 
-    @Test
+    //    @Test
     public void testJWT() {
         String token = createJWT("1", "lcn", "weme", 5000);
         System.out.println("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxIiwiaWF0IjoxNDgzNTIwMjg3LCJzdWIiOiJ3ZW1lIiwiaXNzIjoibGNuIiwiZXhwIjoxNDgzNTIwMjkyfQ.ztU1UbpEYJJfUCPq8fWmAukK9LmK5mjbhILWoCSMfNc\n");

@@ -12,7 +12,6 @@ public class ResponseInfo {
     private Long id;
     private String token;
     private String gender;
-
     private Object result;
     private String pages;
 

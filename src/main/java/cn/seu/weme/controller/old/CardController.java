@@ -53,7 +53,6 @@ public class CardController {
     }
 
 
-
     @RequestMapping(value = "/likefoodcard", method = RequestMethod.POST)
     public ResponseInfo likeFoodCard(@RequestBody JSONObject jsonObject) {
 
