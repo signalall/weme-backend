@@ -22,7 +22,7 @@ public class FoodCardController {
     private FoodCardService foodCardService;
 
     @RequestMapping(value = "/publishcard", method = RequestMethod.POST)
-    public Map publishCard(@RequestBody JSONObject jsonObject) {
+    public ResponseInfo publishCard(@RequestBody JSONObject jsonObject) {
         String token = jsonObject.getString("token");
         String title = jsonObject.getString("title");
         String location = jsonObject.getString("location");
@@ -36,7 +36,7 @@ public class FoodCardController {
 
 
     @RequestMapping(value = "/getfoodcard", method = RequestMethod.POST)
-    public Map getFoodCard(@RequestBody JSONObject jsonObject) {
+    public ResponseInfo getFoodCard(@RequestBody JSONObject jsonObject) {
         String token = jsonObject.getString("token");
         Long foodcardid = jsonObject.getLong("foodcardid");
         return foodCardService.likeFoodCard(token,foodcardid);
@@ -45,7 +45,7 @@ public class FoodCardController {
 
 
     @RequestMapping(value = "/likefoodcard", method = RequestMethod.POST)
-    public Map likeFoodCard(@RequestBody JSONObject jsonObject) {
+    public ResponseInfo likeFoodCard(@RequestBody JSONObject jsonObject) {
         String token = jsonObject.getString("token");
 
         return foodCardService.getFoodCard(token);
